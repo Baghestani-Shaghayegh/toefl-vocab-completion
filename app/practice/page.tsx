@@ -332,12 +332,18 @@ export default function PracticePage() {
                 Sign up free to get daily drills, progress tracking across sessions, and adaptive exercises that target your weak vocabulary areas.
               </p>
               <div className="flex flex-wrap gap-3">
-                <button className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500">
+                <Link
+                  href="/auth?view=signup"
+                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
+                >
                   Sign up — it's free
-                </button>
-                <button className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10">
+                </Link>
+                <Link
+                  href="/auth?view=login"
+                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
                   Log in
-                </button>
+                </Link>
                 <Link
                   href="/"
                   className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
