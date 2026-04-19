@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Header from "./components/Header";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -117,40 +118,7 @@ export default function HomePage() {
         <div className="absolute right-0 top-16 -z-10 h-80 w-80 rounded-full bg-blue-200/20 blur-3xl" />
 
         {/* Header: sticky with semi-transparent dark background; simplified with logo + action buttons only */}
-        <header className="sticky top-0 z-50 h-20 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
-          <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 sm:px-10 lg:px-12">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/12 text-lg font-semibold text-white ring-1 ring-white/20 backdrop-blur">
-                L
-              </div>
-              <div>
-                <p className="text-base font-semibold tracking-tight text-white">
-                  LexiLift
-                </p>
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-200">
-                  Reading prep
-                </p>
-              </div>
-            </Link>
-
-            {/* Action buttons: Log in + Start free */}
-            <div className="flex items-center gap-3">
-              <Link
-                href="/auth?view=login"
-                className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:text-white"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/practice"
-                className="inline-flex rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/20 transition hover:bg-blue-500"
-              >
-                Start free
-              </Link>
-            </div>
-          </div>
-        </header>
+        <Header />
 
         {/* Hero section: min-h-screen ensures full viewport coverage; scroll-mt-20 accounts for sticky header */}
         <section className="relative h-[calc(100dvh-80px)] scroll-mt-[80px] px-6 py-8  flex items-center sm:px-10 lg:px-12">
