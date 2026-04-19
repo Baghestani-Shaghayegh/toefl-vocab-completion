@@ -25,6 +25,8 @@ function Field({
   value,
   onChange,
   autoComplete,
+  error,
+  hideError,
 }: {
   label: string;
   type?: string;
@@ -32,18 +34,27 @@ function Field({
   value: string;
   onChange: (v: string) => void;
   autoComplete?: string;
+  error?: string;
+  hideError?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold text-slate-700">{label}</label>
+      <label className="text-sm font-semibold text-slate-700">
+        {label} <span className="text-slate-700">*</span>
+      </label>
       <input
         type={type}
         placeholder={placeholder}
         value={value}
         autoComplete={autoComplete}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
+        className={`w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition ${
+          error
+            ? 'border-red-500 focus:border-red-500 focus:ring-3 focus:ring-red-100'
+            : 'border-slate-300 focus:border-blue-500 focus:ring-3 focus:ring-blue-100'
+        }`}
       />
+      {error && !hideError && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );
 }
@@ -64,12 +75,25 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function validateFields() {
+    const errors: Record<string, string> = {};
+    if (!email.trim()) errors.email = 'Email is required';
+    if (!password.trim()) errors.password = 'Password is required';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
+
+    if (!validateFields()) {
+      return;
+    }
+
     setLoading(true);
+    const errors: Record<string, string> = {};
 
     try {
       const supabase = createClient(
@@ -77,44 +101,53 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      // Sign in with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (authError) {
-        setError(authError.message);
+        errors.email = 'Incorrect email or password';
+        errors.password = 'Incorrect email or password';
+        setFieldErrors(errors);
         setLoading(false);
         return;
       }
 
       if (!authData.user) {
-        setError('Failed to log in');
+        errors.email = 'Incorrect email or password';
+        errors.password = 'Incorrect email or password';
+        setFieldErrors(errors);
         setLoading(false);
         return;
       }
 
-      // Redirect to practice or dashboard
-      router.push('/practice');
+      router.push('/');
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      errors.email = 'Incorrect email or password';
+      errors.password = 'Incorrect email or password';
+      setFieldErrors(errors);
       setLoading(false);
     }
   }
 
   return (
     <>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
-        <p className="text-[15px] text-slate-500">Log in to continue your practice.</p>
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#173154] text-[17px] font-bold text-white">
+          L
+        </div>
+        <div>
+          <p className="text-[17px] font-bold text-slate-900 leading-none">LexiLift</p>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-0.5">Reading prep</p>
+        </div>
       </div>
 
-      {error && (
-        <div className="mb-5 p-4 rounded-lg bg-red-50 border border-red-200">
-          <p className="text-sm text-red-700">{error}</p>
-        </div>
-      )}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900 mb-1">Good to have you back.</h1>
+        <p className="text-[15px] text-slate-500">Pick up where you left off.</p>
+      </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Field
@@ -122,16 +155,21 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
           type="email"
           placeholder="you@example.com"
           value={email}
-          onChange={setEmail}
+          onChange={(value) => {
+            setEmail(value);
+            if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: '' });
+          }}
           autoComplete="email"
+          error={fieldErrors.email}
+          hideError={fieldErrors.email === 'Incorrect email or password'}
         />
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold text-slate-700">Password</label>
+            <label className="text-sm font-semibold text-slate-700">Password <span className="text-slate-700">*</span></label>
             <button
               type="button"
-              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition"
+              className="text-sm font-medium text-blue-600 hover:text-blue-700 transition cursor-pointer"
             >
               Forgot password?
             </button>
@@ -141,15 +179,28 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
             placeholder="••••••••"
             value={password}
             autoComplete="current-password"
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
+            onChange={(e) => {
+              setPassword(e.target.value);
+              if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: '' });
+            }}
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition ${
+              fieldErrors.password
+                ? 'border-red-500 focus:border-red-500 focus:ring-3 focus:ring-red-100'
+                : 'border-slate-300 focus:border-blue-500 focus:ring-3 focus:ring-blue-100'
+            }`}
           />
+          {fieldErrors.password && fieldErrors.password === 'Incorrect email or password' && (
+            <p className="text-sm text-red-500 mt-1">{fieldErrors.password}</p>
+          )}
+          {fieldErrors.password && fieldErrors.password !== 'Incorrect email or password' && (
+            <p className="text-sm text-red-500">{fieldErrors.password}</p>
+          )}
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+          className="w-full rounded-xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
         >
           {loading ? 'Logging in…' : 'Log in'}
         </button>
@@ -158,7 +209,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
 
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer"
         >
           <GoogleIcon />
           Continue with Google
@@ -170,7 +221,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
         <button
           type="button"
           onClick={onSwitch}
-          className="font-semibold text-blue-600 hover:text-blue-700 transition"
+          className="font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           Sign up free
         </button>
@@ -188,10 +239,27 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  function validateFields() {
+    const errors: Record<string, string> = {};
+    if (!firstName.trim()) errors.firstName = 'First name is required';
+    if (!lastName.trim()) errors.lastName = 'Last name is required';
+    if (!email.trim()) errors.email = 'Email is required';
+    if (!password.trim()) errors.password = 'Password is required';
+    if (password.length > 0 && password.length < 8) errors.password = 'Password must be at least 8 characters';
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+
+    if (!validateFields()) {
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -200,7 +268,6 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       );
 
-      // Sign up with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -218,7 +285,6 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         return;
       }
 
-      // Insert user profile into users table
       const { error: insertError } = await supabase.from('users').insert([
         {
           id: authData.user.id,
@@ -235,8 +301,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         return;
       }
 
-      // Redirect to practice or dashboard
-      router.push('/practice');
+      router.push('/');
     } catch (err: any) {
       setError(err.message || 'An error occurred');
       setLoading(false);
@@ -245,6 +310,17 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
   return (
     <>
+      {/* Logo */}
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#173154] text-[17px] font-bold text-white">
+          L
+        </div>
+        <div>
+          <p className="text-[17px] font-bold text-slate-900 leading-none">LexiLift</p>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-0.5">Reading prep</p>
+        </div>
+      </div>
+
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
         <p className="text-[15px] text-slate-500">Start practicing for free — no credit card needed.</p>
@@ -262,15 +338,23 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
             label="First name"
             placeholder="Alex"
             value={firstName}
-            onChange={setFirstName}
+            onChange={(value) => {
+              setFirstName(value);
+              if (fieldErrors.firstName) setFieldErrors({ ...fieldErrors, firstName: '' });
+            }}
             autoComplete="given-name"
+            error={fieldErrors.firstName}
           />
           <Field
             label="Last name"
             placeholder="Kim"
             value={lastName}
-            onChange={setLastName}
+            onChange={(value) => {
+              setLastName(value);
+              if (fieldErrors.lastName) setFieldErrors({ ...fieldErrors, lastName: '' });
+            }}
             autoComplete="family-name"
+            error={fieldErrors.lastName}
           />
         </div>
 
@@ -279,8 +363,12 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
           type="email"
           placeholder="you@example.com"
           value={email}
-          onChange={setEmail}
+          onChange={(value) => {
+            setEmail(value);
+            if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: '' });
+          }}
           autoComplete="email"
+          error={fieldErrors.email}
         />
 
         <Field
@@ -288,14 +376,18 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
           type="password"
           placeholder="Min. 8 characters"
           value={password}
-          onChange={setPassword}
+          onChange={(value) => {
+            setPassword(value);
+            if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: '' });
+          }}
           autoComplete="new-password"
+          error={fieldErrors.password}
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed mt-1"
+          className="w-full rounded-xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
         >
           {loading ? 'Creating account…' : 'Create account'}
         </button>
@@ -304,7 +396,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98]"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer"
         >
           <GoogleIcon />
           Continue with Google
@@ -327,7 +419,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         <button
           type="button"
           onClick={onSwitch}
-          className="font-semibold text-blue-600 hover:text-blue-700 transition"
+          className="font-semibold text-blue-600 hover:text-blue-700 transition cursor-pointer"
         >
           Log in
         </button>
@@ -352,18 +444,6 @@ export default function AuthPage() {
   return (
     <main className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-[420px]">
-
-        {/* Brand */}
-        <Link href="/" className="flex items-center justify-center gap-3 mb-8">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#173154] text-[17px] font-bold text-white">
-            L
-          </div>
-          <div>
-            <p className="text-[17px] font-bold text-slate-900 leading-none">LexiLift</p>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-slate-400 mt-0.5">Reading prep</p>
-          </div>
-        </Link>
-
         {/* Card */}
         <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-8 py-8">
           {view === 'login'
@@ -377,7 +457,6 @@ export default function AuthPage() {
             ← Back to home
           </Link>
         </p>
-
       </div>
     </main>
   );
