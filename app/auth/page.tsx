@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
 type View = 'login' | 'signup';
 
@@ -96,10 +96,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
     const errors: Record<string, string> = {};
 
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
 
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
@@ -131,6 +128,25 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
     }
   }
 
+  async function handleGoogleSignIn() {
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        console.error('Google sign-in error:', error);
+      }
+    } catch (err: any) {
+      console.error('Error signing in with Google:', err);
+    }
+  }
+
   return (
     <>
       {/* Logo */}
@@ -145,15 +161,15 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
       </div>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-1">Good to have you back.</h1>
-        <p className="text-[15px] text-slate-500">Pick up where you left off.</p>
+        <h1 className="text-2xl font-bold text-slate-900 mb-1">Good to have you back</h1>
+        <p className="text-[15px] text-slate-500">Pick up where you left off</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Field
           label="Email address"
           type="email"
-          placeholder="you@example.com"
+          placeholder="Enter your email"
           value={email}
           onChange={(value) => {
             setEmail(value);
@@ -176,7 +192,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
           </div>
           <input
             type="password"
-            placeholder="••••••••"
+            placeholder="Enter your password"
             value={password}
             autoComplete="current-password"
             onChange={(e) => {
@@ -209,6 +225,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
 
         <button
           type="button"
+          onClick={handleGoogleSignIn}
           className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer"
         >
           <GoogleIcon />
@@ -233,8 +250,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
 // ─── Signup view ──────────────────────────────────────────────────────────────
 function SignupView({ onSwitch }: { onSwitch: () => void }) {
   const router = useRouter();
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -243,8 +259,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
   function validateFields() {
     const errors: Record<string, string> = {};
-    if (!firstName.trim()) errors.firstName = 'First name is required';
-    if (!lastName.trim()) errors.lastName = 'Last name is required';
+    if (!name.trim()) errors.name = 'Name is required';
     if (!email.trim()) errors.email = 'Email is required';
     if (!password.trim()) errors.password = 'Password is required';
     if (password.length > 0 && password.length < 8) errors.password = 'Password must be at least 8 characters';
@@ -263,10 +278,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
     setLoading(true);
 
     try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      );
+      const supabase = createClient();
 
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -289,8 +301,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         {
           id: authData.user.id,
           email,
-          first_name: firstName,
-          last_name: lastName,
+          first_name: name,
           created_at: new Date().toISOString(),
         },
       ]);
@@ -308,10 +319,29 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
     }
   }
 
+  async function handleGoogleSignUp() {
+    try {
+      const supabase = createClient();
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+
+      if (error) {
+        console.error('Google sign-up error:', error);
+      }
+    } catch (err: any) {
+      console.error('Error signing up with Google:', err);
+    }
+  }
+
   return (
     <>
       {/* Logo */}
-      <div className="flex items-center justify-center gap-3 mb-8">
+      <div className="flex items-center justify-center gap-3 mb-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-[#173154] text-[17px] font-bold text-white">
           L
         </div>
@@ -321,47 +351,35 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-5">
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
-        <p className="text-[15px] text-slate-500">Start practicing for free — no credit card needed.</p>
+        <p className="text-[15px] text-slate-500">Practice TOEFL vocabulary in context</p>
+        <p className="text-[15px] text-slate-500">free to start</p>
       </div>
 
       {error && (
-        <div className="mb-5 p-4 rounded-lg bg-red-50 border border-red-200">
+        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200">
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div className="grid grid-cols-2 gap-3">
-          <Field
-            label="First name"
-            placeholder="Alex"
-            value={firstName}
-            onChange={(value) => {
-              setFirstName(value);
-              if (fieldErrors.firstName) setFieldErrors({ ...fieldErrors, firstName: '' });
-            }}
-            autoComplete="given-name"
-            error={fieldErrors.firstName}
-          />
-          <Field
-            label="Last name"
-            placeholder="Kim"
-            value={lastName}
-            onChange={(value) => {
-              setLastName(value);
-              if (fieldErrors.lastName) setFieldErrors({ ...fieldErrors, lastName: '' });
-            }}
-            autoComplete="family-name"
-            error={fieldErrors.lastName}
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <Field
+          label="Name"
+          placeholder="Enter your name"
+          value={name}
+          onChange={(value) => {
+            setName(value);
+            if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: '' });
+          }}
+          autoComplete="name"
+          error={fieldErrors.name}
+        />
 
         <Field
           label="Email address"
           type="email"
-          placeholder="you@example.com"
+          placeholder="Enter your email"
           value={email}
           onChange={(value) => {
             setEmail(value);
@@ -374,7 +392,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         <Field
           label="Password"
           type="password"
-          placeholder="Min. 8 characters"
+          placeholder="Create a password"
           value={password}
           onChange={(value) => {
             setPassword(value);
@@ -387,7 +405,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-blue-600 py-3 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
+          className="w-full rounded-xl bg-blue-600 py-2.5 text-[15px] font-semibold text-white transition hover:bg-blue-500 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer mt-1"
         >
           {loading ? 'Creating account…' : 'Create account'}
         </button>
@@ -396,14 +414,15 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-3 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer"
+          onClick={handleGoogleSignUp}
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white py-2.5 text-[15px] font-medium text-slate-700 transition hover:bg-slate-50 active:scale-[0.98] cursor-pointer"
         >
           <GoogleIcon />
           Continue with Google
         </button>
       </form>
 
-      <p className="mt-6 text-center text-[13px] text-slate-400 leading-relaxed">
+      <p className="mt-4 text-center text-[12px] text-slate-400 leading-tight">
         By signing up you agree to our{' '}
         <Link href="/terms" className="text-slate-600 underline underline-offset-2 hover:text-slate-900">
           Terms
@@ -414,7 +433,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         </Link>.
       </p>
 
-      <p className="mt-4 text-center text-[14px] text-slate-500">
+      <p className="mt-2 text-center text-[13px] text-slate-500">
         Already have an account?{' '}
         <button
           type="button"
@@ -434,21 +453,23 @@ export default function AuthPage() {
   const viewParam = searchParams.get('view');
   const [view, setView] = useState<View>((viewParam as View) || 'login');
 
-  // Update view when URL changes
   useEffect(() => {
     if (viewParam === 'signup' || viewParam === 'login') {
       setView(viewParam);
     }
   }, [viewParam]);
 
+  function handleSwitchView(newView: View) {
+    setView(newView);
+  }
+
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-[420px]">
-        {/* Card */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-8 py-8">
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-6 py-6">
           {view === 'login'
-            ? <LoginView onSwitch={() => setView('signup')} />
-            : <SignupView onSwitch={() => setView('login')} />
+            ? <LoginView onSwitch={() => handleSwitchView('signup')} />
+            : <SignupView onSwitch={() => handleSwitchView('login')} />
           }
         </div>
 
