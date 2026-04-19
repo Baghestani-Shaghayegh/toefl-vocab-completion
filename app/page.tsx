@@ -1,534 +1,724 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import Header from "./components/Header";
+'use client'
 
-const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How it works", href: "#how-it-works" },
-  { label: "Results", href: "#results" },
-  { label: "Pricing", href: "#pricing" },
-] as const;
+import { useRouter } from 'next/navigation'
 
-// Keeping marketing content in typed arrays makes future copy and ordering updates
-// straightforward without turning the page body into a wall of repeated JSX.
-const stats = [
-  { value: "15 min", label: "to finish a focused daily lesson" },
-  { value: "92%", label: "average weekly completion for active learners" },
-  { value: "18k+", label: "paragraph drills generated and completed" },
-] as const;
+const PREVIEW_WORDS = [
+  { text: 'Built', masked: false },
+  { text: 'by', masked: false },
+  { text: 'tiny', masked: true },
+  { text: 'animals', masked: true },
+  { text: 'called', masked: false },
+  { text: 'coral', masked: false },
+  { text: 'polyps,', masked: true },
+  { text: 'which', masked: false },
+  { text: 'secrete', masked: true },
+  { text: 'calcium', masked: false },
+  { text: 'carbonate', masked: true },
+  { text: 'to', masked: false },
+  { text: 'form', masked: false },
+  { text: 'hard', masked: false },
+  { text: 'skeletons.', masked: false },
+]
 
-const features = [
-  {
-    eyebrow: "Practice in context",
-    title: "Restore missing letters inside real reading flow",
-    description:
-      "Learners complete partially hidden words while reading a paragraph, which builds vocabulary recall and reading confidence at the same time.",
-  },
-  {
-    eyebrow: "Instant feedback",
-    title: "See what was wrong before the moment is gone",
-    description:
-      "Every answer is reviewed immediately with quick guidance, so students understand the pattern behind each correction.",
-  },
-  {
-    eyebrow: "Progress tracking",
-    title: "Spot weak vocabulary areas across sessions",
-    description:
-      "Track pace, accuracy, and recurring word families to make practice feel like preparation instead of guessing.",
-  },
-  {
-    eyebrow: "AI-generated sets",
-    title: "Refresh drills without repeating the same passage",
-    description:
-      "Generate new TOEFL-style and IELTS-style exercises with adjustable difficulty and topic variety.",
-  },
-] as const;
+const FREE_FEATURES = [
+  '5 practice passages per day',
+  'Timer mode — real exam countdown',
+  'Accuracy & progress tracking',
+  'Most-missed words report',
+  'Correct answers after each session',
+]
 
-const steps = [
-  {
-    number: "01",
-    title: "Start a short reading set",
-    description:
-      "Choose a passage built around academic vocabulary, timed pacing, and realistic test-style wording.",
-  },
-  {
-    number: "02",
-    title: "Fill the missing letters",
-    description:
-      "Complete hidden word fragments directly in the paragraph so grammar, spelling, and context work together.",
-  },
-  {
-    number: "03",
-    title: "Review patterns and repeat",
-    description:
-      "Use instant feedback and progress summaries to target the word groups most likely to slow you down on exam day.",
-  },
-] as const;
+const PRO_FEATURES = [
+  'Unlimited daily practices',
+  'AI-generated passages adaptive to your level',
+  'AI explanations for every wrong answer',
+  'Full performance history',
+  'Priority support',
+]
 
-const testimonials = [
-  {
-    quote:
-      "This feels closer to the pressure of a real reading section than apps that only drill isolated words.",
-    name: "Mina K.",
-    role: "TOEFL student",
-  },
-  {
-    quote:
-      "The missing-letter format keeps students active. They read, predict, and self-correct in one flow.",
-    name: "Daniel R.",
-    role: "IELTS instructor",
-  },
-  {
-    quote:
-      "My study sessions got shorter and more useful because I could see which vocabulary patterns kept tripping me up.",
-    name: "Aisha L.",
-    role: "Graduate school applicant",
-  },
-] as const;
+export default function Home() {
+  const router = useRouter()
 
-const logos = [
-  "Northbridge Prep",
-  "Global English Lab",
-  "Summit Academy",
-  "Bridgeway Tutors",
-  "FuturePath",
-] as const;
-
-const pricingItems = [
-  "Unlimited paragraph practice",
-  "Adaptive AI-generated exercises",
-  "Instant answer explanations",
-  "Accuracy and pace tracking",
-  "Weekly study summaries",
-] as const;
-
-export const metadata: Metadata = {
-  title: "LexiLift | TOEFL Vocabulary Practice in Context",
-  description:
-    "A polished TOEFL-style English learning app where students complete missing letters inside paragraphs, get instant feedback, and track progress over time.",
-};
-
-export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#f8f9fa] text-[#0f172a]">
-      <div className="relative overflow-hidden">
-        {/* High-contrast neutrals carry readability; the gradient only adds atmosphere behind the hero. */}
-        <div className="absolute inset-x-0 top-0 -z-10 h-[44rem] bg-[linear-gradient(180deg,#0f172a_0%,#173154_28%,#f8f9fa_76%)]" />
-        <div className="absolute -left-20 top-24 -z-10 h-64 w-64 rounded-full bg-sky-300/20 blur-3xl" />
-        <div className="absolute right-0 top-16 -z-10 h-80 w-80 rounded-full bg-blue-200/20 blur-3xl" />
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,700;1,700&display=swap');
 
-        {/* Header: sticky with semi-transparent dark background; simplified with logo + action buttons only */}
-        <Header />
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        {/* Hero section: min-h-screen ensures full viewport coverage; scroll-mt-20 accounts for sticky header */}
-        <section className="relative h-[calc(100dvh-80px)] scroll-mt-[80px] px-6 py-8  flex items-center sm:px-10 lg:px-12">
-          <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="max-w-2xl self-center">
-              <span className="inline-flex items-center rounded-full border border-white/20 bg-white/12 px-4 py-1.5 text-sm font-medium text-slate-50 backdrop-blur">
-                Designed for TOEFL and IELTS learners who need faster reading accuracy
-              </span>
-              <h1 className="mt-8 text-5xl font-bold tracking-tight leading-[1.02] text-black sm:text-6xl lg:text-7xl">
-                Turn vocabulary practice into a realistic reading workout.
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-800 sm:text-xl">
-                Students complete missing letters inside academic paragraphs,
-                receive instant feedback, and build the exam-day habit of finding
-                the right word in context.
-              </p>
+        body {
+          background: #ffffff;
+          color: #0f172a;
+          font-family: 'Inter', sans-serif;
+        }
 
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-                <Link
-                  href="#pricing"
-                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-950/20 transition hover:bg-blue-500"
-                >
-                  Start Practice
-                </Link>
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/15"
-                >
-                  See how it works
-                </a>
-              </div>
+        /* NAV */
+        nav {
+          border-bottom: 1px solid #f1f5f9;
+          padding: 18px 48px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
 
-              {/* Stats grid: high contrast on semi-transparent cards */}
-              <div className="mt-14 grid gap-4 sm:grid-cols-3">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-[1.75rem] border border-white/15 bg-slate-900/40 p-5 shadow-lg shadow-slate-950/10 backdrop-blur"
-                  >
-                    <p className="text-3xl font-semibold text-white">
-                      {stat.value}
-                    </p>
-                    <p className="mt-2 text-sm leading-6 text-slate-100">
-                      {stat.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
+        .logo {
+          font-family: 'Lora', serif;
+          font-size: 18px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .logo span { color: #2563eb; }
+
+        .nav-right { display: flex; gap: 8px; }
+
+        .btn-ghost {
+          background: transparent;
+          border: 1px solid #e2e8f0;
+          color: #475569;
+          padding: 8px 16px;
+          border-radius: 7px;
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .btn-ghost:hover { border-color: #cbd5e1; color: #0f172a; }
+
+        .btn-primary {
+          background: #2563eb;
+          border: none;
+          color: #fff;
+          padding: 8px 16px;
+          border-radius: 7px;
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background 0.15s;
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+
+        /* HERO */
+        .hero {
+          max-width: 1080px;
+          margin: 0 auto;
+          padding: 88px 48px 80px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 80px;
+          align-items: center;
+        }
+
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1d4ed8;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.4px;
+          padding: 4px 12px;
+          border-radius: 20px;
+          margin-bottom: 24px;
+        }
+
+        .badge-dot {
+          width: 5px; height: 5px;
+          border-radius: 50%;
+          background: #2563eb;
+        }
+
+        h1 {
+          font-family: 'Lora', serif;
+          font-size: clamp(32px, 3.5vw, 48px);
+          font-weight: 700;
+          line-height: 1.15;
+          letter-spacing: -0.5px;
+          color: #0f172a;
+          margin-bottom: 18px;
+        }
+
+        h1 em { font-style: italic; color: #2563eb; }
+
+        .hero-sub {
+          font-size: 16px;
+          color: #64748b;
+          line-height: 1.7;
+          margin-bottom: 32px;
+          max-width: 380px;
+        }
+
+        .btn-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: #2563eb;
+          border: none;
+          color: #fff;
+          padding: 13px 28px;
+          border-radius: 8px;
+          font-family: 'Inter', sans-serif;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(37,99,235,0.22);
+          transition: all 0.15s;
+        }
+        .btn-cta:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-cta-arrow { transition: transform 0.15s; }
+        .btn-cta:hover .btn-cta-arrow { transform: translateX(3px); }
+
+        .hero-note {
+          margin-top: 14px;
+          font-size: 13px;
+          color: #94a3b8;
+        }
+
+        /* PREVIEW CARD */
+        .preview-card {
+          background: #f8fafc;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 28px;
+          box-shadow: 0 4px 24px rgba(15,23,42,0.07);
+        }
+
+        .preview-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 16px;
+        }
+
+        .preview-label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          color: #94a3b8;
+        }
+
+        .timer-pill {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          background: #fff7ed;
+          border: 1px solid #fed7aa;
+          color: #c2410c;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 3px 10px;
+          border-radius: 20px;
+        }
+
+        .timer-dot {
+          width: 5px; height: 5px;
+          border-radius: 50%;
+          background: #f97316;
+          animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+
+        .passage-preview {
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 9px;
+          padding: 18px 20px;
+          font-family: 'Lora', serif;
+          font-size: 15px;
+          line-height: 2;
+          color: #334155;
+          margin-bottom: 18px;
+        }
+
+        .w-blank {
+          display: inline-block;
+          background: #eff6ff;
+          border: 1.5px dashed #93c5fd;
+          border-radius: 4px;
+          padding: 1px 14px;
+          margin: 0 2px;
+          vertical-align: middle;
+          min-width: 64px;
+          height: 26px;
+        }
+
+        .w-text { color: #334155; }
+
+        .preview-input-row {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 14px;
+        }
+
+        .preview-input {
+          flex: 1;
+          background: #fff;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 7px;
+          padding: 10px 14px;
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          color: #94a3b8;
+          pointer-events: none;
+        }
+
+        .preview-btn {
+          background: #0f172a;
+          border: none;
+          color: #fff;
+          padding: 10px 18px;
+          border-radius: 7px;
+          font-family: 'Inter', sans-serif;
+          font-size: 13px;
+          font-weight: 600;
+          pointer-events: none;
+        }
+
+        .preview-stats {
+          display: flex;
+          gap: 12px;
+        }
+
+        .stat-chip {
+          flex: 1;
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 7px;
+          padding: 10px 12px;
+          text-align: center;
+        }
+
+        .stat-chip-num {
+          font-size: 16px;
+          font-weight: 600;
+          color: #0f172a;
+        }
+
+        .stat-chip-label {
+          font-size: 11px;
+          color: #94a3b8;
+          margin-top: 2px;
+        }
+
+        /* DIVIDER */
+        .divider {
+          border: none;
+          border-top: 1px solid #f1f5f9;
+          margin: 0;
+        }
+
+        /* FEATURES */
+        .features-section {
+          max-width: 1080px;
+          margin: 0 auto;
+          padding: 72px 48px;
+        }
+
+        .section-eyebrow {
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          color: #94a3b8;
+          margin-bottom: 10px;
+        }
+
+        .section-title {
+          font-family: 'Lora', serif;
+          font-size: 28px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 48px;
+          line-height: 1.3;
+        }
+
+        .features-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+
+        .feat-card {
+          border: 1px solid #f1f5f9;
+          border-radius: 11px;
+          padding: 24px;
+          background: #fff;
+          transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .feat-card:hover { border-color: #cbd5e1; box-shadow: 0 2px 12px rgba(15,23,42,0.05); }
+
+        .feat-icon {
+          width: 36px; height: 36px;
+          background: #eff6ff;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          margin-bottom: 14px;
+          color: #2563eb;
+        }
+
+        .feat-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: #0f172a;
+          margin-bottom: 6px;
+        }
+
+        .feat-desc {
+          font-size: 13px;
+          color: #64748b;
+          line-height: 1.6;
+        }
+
+        /* PRICING */
+        .pricing-section {
+          background: #f8fafc;
+          border-top: 1px solid #f1f5f9;
+          border-bottom: 1px solid #f1f5f9;
+          padding: 72px 48px;
+        }
+
+        .pricing-inner {
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .pricing-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+          margin-top: 48px;
+        }
+
+        .plan-card {
+          background: #fff;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 32px;
+        }
+
+        .plan-card.featured {
+          border-color: #2563eb;
+          border-width: 2px;
+          position: relative;
+        }
+
+        .plan-tag {
+          position: absolute;
+          top: -12px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #2563eb;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          padding: 3px 12px;
+          border-radius: 20px;
+          white-space: nowrap;
+        }
+
+        .plan-name {
+          font-size: 13px;
+          font-weight: 600;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.6px;
+          margin-bottom: 10px;
+        }
+
+        .plan-price {
+          font-family: 'Lora', serif;
+          font-size: 36px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 4px;
+        }
+
+        .plan-price span {
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          font-weight: 400;
+          color: #94a3b8;
+        }
+
+        .plan-desc {
+          font-size: 13px;
+          color: #64748b;
+          margin-bottom: 24px;
+          padding-bottom: 24px;
+          border-bottom: 1px solid #f1f5f9;
+        }
+
+        .plan-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+        .plan-feature {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 13px;
+          color: #475569;
+        }
+
+        .check {
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          background: #dcfce7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          color: #15803d;
+          flex-shrink: 0;
+          margin-top: 1px;
+        }
+
+        .plan-btn {
+          display: block;
+          width: 100%;
+          margin-top: 28px;
+          padding: 12px;
+          border-radius: 8px;
+          font-family: 'Inter', sans-serif;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.15s;
+          text-align: center;
+          border: none;
+        }
+
+        .plan-btn-outline {
+          background: transparent;
+          border: 1.5px solid #e2e8f0 !important;
+          color: #475569;
+        }
+        .plan-btn-outline:hover { border-color: #cbd5e1 !important; color: #0f172a; }
+
+        .plan-btn-solid {
+          background: #2563eb;
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+        }
+        .plan-btn-solid:hover { background: #1d4ed8; }
+
+        /* CTA BANNER */
+        .cta-banner {
+          max-width: 1080px;
+          margin: 0 auto;
+          padding: 72px 48px;
+          text-align: center;
+        }
+
+        .cta-banner h2 {
+          font-family: 'Lora', serif;
+          font-size: 30px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 12px;
+        }
+
+        .cta-banner p {
+          font-size: 15px;
+          color: #64748b;
+          margin-bottom: 28px;
+        }
+
+        /* FOOTER */
+        .footer-line {
+          border-top: 1px solid #f1f5f9;
+          padding: 24px 48px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          max-width: 1080px;
+          margin: 0 auto;
+        }
+
+        .footer-logo {
+          font-family: 'Lora', serif;
+          font-size: 15px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .footer-logo span { color: #2563eb; }
+
+        .footer-copy { font-size: 13px; color: #94a3b8; }
+
+        @media (max-width: 768px) {
+          nav { padding: 16px 20px; }
+          .hero { grid-template-columns: 1fr; gap: 40px; padding: 48px 20px 56px; }
+          .features-section { padding: 48px 20px; }
+          .features-grid { grid-template-columns: 1fr; }
+          .pricing-section { padding: 48px 20px; }
+          .pricing-grid { grid-template-columns: 1fr; }
+          .cta-banner { padding: 48px 20px; }
+          .footer-line { padding: 20px; flex-direction: column; gap: 8px; }
+        }
+      `}</style>
+
+      {/* NAV */}
+      <nav>
+        <div className="logo">TOEFL<span>Prep</span></div>
+        <div className="nav-right">
+          <button className="btn-ghost" onClick={() => router.push('/login')}>Log in</button>
+          <button className="btn-primary" onClick={() => router.push('/signup')}>Sign up free</button>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section className="hero">
+        <div>
+          <div className="badge"><span className="badge-dot" />TOEFL reading practice</div>
+          <h1>Practice the words that <em>show up</em> on test day</h1>
+          <p className="hero-sub">
+            Fill in missing words from real TOEFL academic passages. Track your accuracy, beat the clock, and know exactly where you need to improve.
+          </p>
+          <button className="btn-cta" onClick={() => router.push('/signup')}>
+            Try a sample passage <span className="btn-cta-arrow">→</span>
+          </button>
+          <p className="hero-note">Free to start · No credit card required</p>
+        </div>
+
+        {/* STATIC PREVIEW */}
+        <div className="preview-card">
+          <div className="preview-top">
+            <span className="preview-label">Sample · Biology</span>
+            <span className="timer-pill"><span className="timer-dot" />36:42 remaining</span>
+          </div>
+          <div className="passage-preview">
+            Coral reefs are <span className="w-blank" /> by <span className="w-blank" /> animals
+            called coral polyps, which <span className="w-blank" /> calcium carbonate
+            to <span className="w-blank" /> hard skeletons that support diverse marine ecosystems.
+          </div>
+          <div className="preview-input-row">
+            <div className="preview-input">Type your answer...</div>
+            <div className="preview-btn">Check</div>
+          </div>
+          <div className="preview-stats">
+            <div className="stat-chip">
+              <div className="stat-chip-num">84%</div>
+              <div className="stat-chip-label">Accuracy</div>
             </div>
-
-            {/* Hero mockup: positioned on the right with proper alignment */}
-            <div className="relative self-center lg:pl-8">
-              {/* The layered practice mockup gives the landing page product presence without depending on screenshots or client-side animation. */}
-              <div className="relative rounded-[2rem] border border-white/15 bg-[#102846] p-4 shadow-[0_30px_80px_rgba(9,18,33,0.38)]">
-              <div className="rounded-[1.65rem] bg-[#f8f9fa] p-5 sm:p-6">
-                <div className="flex items-center justify-between gap-4 rounded-[1.35rem] bg-white px-4 py-3 shadow-sm ring-1 ring-slate-200">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Today&apos;s lesson
-                    </p>
-                    <h2 className="text-lg font-semibold text-slate-950">
-                      Coastal Ecosystems
-                    </h2>
-                  </div>
-                  <div className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-semibold text-emerald-700">
-                    7 min left
-                  </div>
-                </div>
-
-                <div className="mt-5 rounded-[1.5rem] bg-white p-5 ring-1 ring-slate-200">
-                  <div className="flex items-center justify-between text-sm text-slate-600">
-                    <span>Paragraph exercise</span>
-                    <span>Question 6 of 10</span>
-                  </div>
-                  <p className="mt-4 text-lg leading-8 text-slate-800">
-                    Marine scientists explain that a stable coastline depends on
-                    diverse vege
-                    <span className="rounded-xl bg-blue-600 px-2.5 py-1 font-semibold text-white shadow-sm">
-                      t
-                    </span>
-                    ation, because roots help protect the soil while also
-                    reducing the force of moving water.
-                  </p>
-
-                  <div className="mt-6 grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
-                    <div className="rounded-[1.25rem] bg-slate-50 p-4 shadow-sm ring-1 ring-slate-200">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
-                        Feedback
-                      </p>
-                      <p className="mt-3 text-sm leading-6 text-slate-700">
-                        Correct. <span className="font-semibold text-slate-950">Vegetation</span> fits the ecology topic
-                        and matches the noun form suggested by the sentence.
-                      </p>
-                    </div>
-                    <div className="rounded-[1.25rem] bg-[#173154] p-4 text-white shadow-sm">
-                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100">
-                        Session score
-                      </p>
-                      <p className="mt-3 text-3xl font-semibold">84%</p>
-                      <p className="mt-1 text-sm leading-6 text-slate-100">
-                        Strong context recall. Review environmental vocabulary next.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  {[
-                    { label: "Accuracy", value: "84%" },
-                    { label: "Pace", value: "Fast" },
-                    { label: "Streak", value: "11 days" },
-                  ].map((item) => (
-                    <div
-                      key={item.label}
-                      className="rounded-[1.25rem] bg-white px-4 py-4 text-center shadow-sm ring-1 ring-slate-200"
-                    >
-                      <p className="text-xs uppercase tracking-[0.22em] text-slate-500">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-lg font-semibold text-slate-950">
-                        {item.value}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="absolute -bottom-8 -left-8 hidden w-52 rounded-[1.5rem] border border-white/20 bg-[#173154] p-5 text-white shadow-2xl lg:block">
-                <p className="text-xs uppercase tracking-[0.22em] text-blue-100">
-                  Weekly growth
-                </p>
-                <p className="mt-3 text-3xl font-semibold">+18%</p>
-                <p className="mt-2 text-sm leading-6 text-slate-100">
-                  Improvement in academic vocabulary completion over the last 7
-                  days.
-                </p>
-              </div>
+            <div className="stat-chip">
+              <div className="stat-chip-num">12</div>
+              <div className="stat-chip-label">Streak</div>
             </div>
+            <div className="stat-chip">
+              <div className="stat-chip-num">3/7</div>
+              <div className="stat-chip-label">Words left</div>
             </div>
           </div>
-        </section>
-      </div>
-
-      {/* Features section: scroll-mt-[80px] accounts for sticky header height; py-20 for consistent spacing */}
-      <section
-        id="features"
-        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
-      >
-        <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            eyebrow="Features"
-            title="A more polished way to practice the exact skill most students overlook"
-            description="Instead of separating spelling, vocabulary, and reading comprehension into different drills, the interface brings them together inside one clean daily workflow."
-          />
-
-        {/* Solid surfaces and visible borders help each card read clearly against the neutral page background. */}
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <FeaturePanel feature={features[0]} className="bg-white" />
-          <FeaturePanel
-            feature={features[1]}
-            className="bg-[#173154] text-white"
-            invert
-          />
-          <FeaturePanel feature={features[2]} className="bg-white" />
-          <FeaturePanel feature={features[3]} className="bg-slate-50" />
-        </div>
         </div>
       </section>
 
-      <section
-        id="how-it-works"
-        className="scroll-mt-[80px] min-h-screen bg-[#173154] py-24 text-white"
-      >
-        <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
-          <SectionIntro
-            eyebrow="How it works"
-            title="Simple enough for everyday use, structured enough for serious progress"
-            description="The product flow is intentionally compact so students can practice consistently on busy schedules without losing the feel of real reading passages."
-            invert
-          />
+      <hr className="divider" />
 
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {steps.map((step) => (
-              <article
-                key={step.number}
-                className="rounded-[2rem] border border-white/15 bg-white/10 p-8 backdrop-blur"
-              >
-                <p className="text-sm font-semibold tracking-[0.28em] text-blue-100">
-                  {step.number}
-                </p>
-                <h3 className="mt-5 text-2xl font-semibold">{step.title}</h3>
-                <p className="mt-4 text-base leading-7 text-slate-100">
-                  {step.description}
-                </p>
-              </article>
-            ))}
+      {/* FEATURES */}
+      <section className="features-section">
+        <p className="section-eyebrow">What you get</p>
+        <h2 className="section-title">Everything built around the TOEFL format</h2>
+        <div className="features-grid">
+          <div className="feat-card">
+            <div className="feat-icon">⏱</div>
+            <div className="feat-title">Exam timer mode</div>
+            <p className="feat-desc">Practice under real test conditions with the exact time limit you'll face on exam day.</p>
+          </div>
+          <div className="feat-card">
+            <div className="feat-icon">◎</div>
+            <div className="feat-title">Accuracy tracking</div>
+            <p className="feat-desc">See your accuracy per session and over time. Know which words and topics trip you up most.</p>
+          </div>
+          <div className="feat-card">
+            <div className="feat-icon">↻</div>
+            <div className="feat-title">Most-missed words</div>
+            <p className="feat-desc">After each session, see a report of your most common mistakes so you can focus your study.</p>
+          </div>
+          <div className="feat-card">
+            <div className="feat-icon">✓</div>
+            <div className="feat-title">Instant answer reveal</div>
+            <p className="feat-desc">Every wrong answer shows you the correct word immediately — no guessing what you missed.</p>
+          </div>
+          <div className="feat-card">
+            <div className="feat-icon">◈</div>
+            <div className="feat-title">Adaptive AI practices</div>
+            <p className="feat-desc">AI generates passages calibrated to your current level and focuses on your weak areas. <span style={{color:'#2563eb',fontWeight:600}}>Pro</span></p>
+          </div>
+          <div className="feat-card">
+            <div className="feat-icon">◇</div>
+            <div className="feat-title">AI answer explanations</div>
+            <p className="feat-desc">Understand why an answer is correct — with context, meaning, and usage examples. <span style={{color:'#2563eb',fontWeight:600}}>Pro</span></p>
           </div>
         </div>
       </section>
 
-      {/* Results / Social proof section: scroll-mt-[80px] for header offset, py-20 for spacing */}
-      <section
-        id="results"
-        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
-      >
-        <div className="mx-auto max-w-7xl">
-          <SectionIntro
-            eyebrow="Social proof"
-            title="Built to look credible before the first testimonial is even real"
-            description="These placeholders are ready to swap for institutional logos, verified student results, or review snippets once you have production data."
-          />
-
-        <div className="mt-10 grid gap-4 rounded-[2rem] border border-slate-200 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)] sm:grid-cols-5">
-          {logos.map((logo) => (
-            <div
-              key={logo}
-              className="rounded-[1.25rem] border border-slate-200 bg-slate-50 px-4 py-5 text-center text-xs font-semibold uppercase tracking-[0.28em] text-slate-600"
-            >
-              {logo}
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
-          {testimonials.map((testimonial) => (
-            <article
-              key={testimonial.name}
-              className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-[0_20px_50px_rgba(15,23,42,0.06)]"
-            >
-              <p className="text-lg leading-8 text-slate-800">
-                &quot;{testimonial.quote}&quot;
-              </p>
-              <div className="mt-8 border-t border-slate-200 pt-5">
-                <p className="font-semibold text-slate-950">
-                  {testimonial.name}
-                </p>
-                <p className="mt-1 text-sm text-slate-600">
-                  {testimonial.role}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
-        </div>
-      </section>
-
-      {/* Pricing section: scroll-mt-[80px] for anchor navigation, py-20 for vertical spacing */}
-      <section
-        id="pricing"
-        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 rounded-[2.5rem] bg-[#173154] px-6 py-8 text-white shadow-[0_35px_90px_rgba(17,36,63,0.22)] sm:px-8 sm:py-10 lg:grid-cols-[1fr_0.85fr] lg:px-12 lg:py-12">
-            <div className="max-w-2xl self-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-blue-100">
-                Pricing
-              </p>
-              <h2 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-                Start free. Upgrade when students need more daily reps and deeper tracking.
-              </h2>
-              <p className="mt-5 text-base leading-7 text-slate-100">
-                This section uses placeholder pricing, but the design is ready for
-                real billing plans and a cleaner conversion path to sign-up.
-              </p>
-
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-                <Link
-                  href="#pricing"
-                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-blue-500"
-                >
-                  Start Practice
-                </Link>
-                <Link
-                  href="#features"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
-                >
-                  Explore Features
-                </Link>
-              </div>
-            </div>
-
-            <aside className="rounded-[2rem] bg-[#0f172a] p-8 ring-1 ring-white/15">
-              <p className="text-sm font-medium text-slate-100">Pro plan</p>
-              <div className="mt-3 flex items-end gap-2">
-                <span className="text-5xl font-semibold">$12</span>
-                <span className="pb-1 text-slate-100">per month</span>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-slate-100">
-                A simple student plan for consistent weekly practice and richer
-                AI-generated sets.
-              </p>
-
-              <ul className="mt-8 space-y-4">
-                {pricingItems.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm leading-6">
-                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-blue-500" />
-                    <span className="text-white">{item}</span>
+      {/* PRICING */}
+      <section className="pricing-section">
+        <div className="pricing-inner">
+          <p className="section-eyebrow" style={{textAlign:'center'}}>Pricing</p>
+          <h2 className="section-title" style={{textAlign:'center',maxWidth:'100%'}}>Start free. Upgrade when you're ready.</h2>
+          <div className="pricing-grid">
+            <div className="plan-card">
+              <p className="plan-name">Free</p>
+              <p className="plan-price">$0 <span>/ forever</span></p>
+              <p className="plan-desc">Everything you need to get started and build a daily habit.</p>
+              <ul className="plan-features">
+                {FREE_FEATURES.map(f => (
+                  <li key={f} className="plan-feature">
+                    <span className="check">✓</span>{f}
                   </li>
                 ))}
               </ul>
-            </aside>
+              <button className="plan-btn plan-btn-outline" onClick={() => router.push('/signup')}>
+                Get started free
+              </button>
+            </div>
+
+            <div className="plan-card featured">
+              <span className="plan-tag">Most popular</span>
+              <p className="plan-name">Pro</p>
+              <p className="plan-price">$9 <span>/ month</span></p>
+              <p className="plan-desc">For serious test-takers who want unlimited practice and AI-powered feedback.</p>
+              <ul className="plan-features">
+                {PRO_FEATURES.map(f => (
+                  <li key={f} className="plan-feature">
+                    <span className="check">✓</span>{f}
+                  </li>
+                ))}
+              </ul>
+              <button className="plan-btn plan-btn-solid" onClick={() => router.push('/signup')}>
+                Start Pro free trial
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer: dark text on light background for readability */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:px-12">
-          <div>
-            <p className="text-lg font-semibold text-slate-950">LexiLift</p>
-            <p className="mt-2 text-sm leading-6 text-slate-700">
-              TOEFL-style reading and vocabulary practice for students who want
-              a cleaner path to higher scores.
-            </p>
-          </div>
+      {/* CTA BANNER */}
+      <section className="cta-banner">
+        <h2>Ready to stop guessing on test day?</h2>
+        <p>Join thousands of TOEFL learners who practice smarter, not harder.</p>
+        <button className="btn-cta" onClick={() => router.push('/signup')}>
+          Try a sample passage <span className="btn-cta-arrow">→</span>
+        </button>
+      </section>
 
-          <div className="flex flex-wrap gap-6 text-sm font-medium text-slate-700">
-            <a href="#features" className="transition hover:text-slate-950">
-              Features
-            </a>
-            <a href="#how-it-works" className="transition hover:text-slate-950">
-              How it works
-            </a>
-            <a href="#results" className="transition hover:text-slate-950">
-              Results
-            </a>
-            <a href="#pricing" className="transition hover:text-slate-950">
-              Pricing
-            </a>
-          </div>
-        </div>
-      </footer>
-    </main>
-  );
-}
+      <hr className="divider" />
 
-type SectionIntroProps = {
-  eyebrow: string;
-  title: string;
-  description: string;
-  invert?: boolean;
-};
-
-function SectionIntro({
-  eyebrow,
-  title,
-  description,
-  invert = false,
-}: SectionIntroProps) {
-  return (
-    <div className="max-w-3xl">
-      <p
-        className={`text-sm font-semibold uppercase tracking-[0.28em] ${
-          invert ? "text-blue-100" : "text-blue-700"
-        }`}
-      >
-        {eyebrow}
-      </p>
-      <h2
-        className={`mt-4 text-4xl font-semibold tracking-tight sm:text-5xl ${
-          invert ? "text-white" : "text-slate-950"
-        }`}
-      >
-        {title}
-      </h2>
-      <p
-        className={`mt-4 text-base leading-7 sm:text-lg ${
-          invert ? "text-slate-100" : "text-slate-700"
-        }`}
-      >
-        {description}
-      </p>
-    </div>
-  );
-}
-
-type FeaturePanelProps = {
-  feature: (typeof features)[number];
-  className: string;
-  invert?: boolean;
-};
-
-function FeaturePanel({
-  feature,
-  className,
-  invert = false,
-}: FeaturePanelProps) {
-  return (
-    <article
-      className={`rounded-[2rem] border p-8 shadow-[0_20px_50px_rgba(15,23,42,0.06)] ${
-        invert ? "border-white/10" : "border-slate-200"
-      } ${className}`}
-    >
-      <p
-        className={`text-sm font-semibold uppercase tracking-[0.24em] ${
-          invert ? "text-blue-100" : "text-blue-700"
-        }`}
-      >
-        {feature.eyebrow}
-      </p>
-      <h3 className="mt-5 text-2xl font-semibold tracking-tight">
-        {feature.title}
-      </h3>
-      <p
-        className={`mt-4 max-w-xl text-base leading-7 ${
-          invert ? "text-slate-100" : "text-slate-700"
-        }`}
-      >
-        {feature.description}
-      </p>
-    </article>
-  );
+      <div className="footer-line">
+        <div className="footer-logo">TOEFL<span>Prep</span></div>
+        <div className="footer-copy">© {new Date().getFullYear()} TOEFLPrep · Built for serious test takers</div>
+      </div>
+    </>
+  )
 }
