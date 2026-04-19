@@ -116,9 +116,10 @@ export default function HomePage() {
         <div className="absolute -left-20 top-24 -z-10 h-64 w-64 rounded-full bg-sky-300/20 blur-3xl" />
         <div className="absolute right-0 top-16 -z-10 h-80 w-80 rounded-full bg-blue-200/20 blur-3xl" />
 
-        {/* Header: sticky with semi-transparent dark background for readability over gradient */}
+        {/* Header: sticky with semi-transparent dark background; simplified with logo + action buttons only */}
         <header className="sticky top-0 z-50 h-20 border-b border-white/10 bg-slate-950/80 backdrop-blur-md">
           <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4 sm:px-10 lg:px-12">
+            {/* Logo */}
             <Link href="/" className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/12 text-lg font-semibold text-white ring-1 ring-white/20 backdrop-blur">
                 L
@@ -133,30 +134,16 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <nav className="hidden items-center gap-8 lg:flex">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-sm font-medium text-slate-100 transition hover:text-white"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </nav>
-
+            {/* Action buttons: Log in + Start free */}
             <div className="flex items-center gap-3">
+              <button className="rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:text-white">
+                Log in
+              </button>
               <Link
-                href="#features"
-                className="hidden rounded-full px-4 py-2 text-sm font-medium text-slate-100 transition hover:text-white sm:inline-flex"
-              >
-                Explore
-              </Link>
-              <Link
-                href="#pricing"
+                href="/practice"
                 className="inline-flex rounded-full bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-950/20 transition hover:bg-blue-500"
               >
-                See plans
+                Start free
               </Link>
             </div>
           </div>
@@ -307,7 +294,7 @@ export default function HomePage() {
       {/* Features section: scroll-mt-[80px] accounts for sticky header height; py-20 for consistent spacing */}
       <section
         id="features"
-        className="scroll-mt-[80px] px-6 py-20 sm:px-10 lg:px-12"
+        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
       >
         <div className="mx-auto max-w-7xl">
           <SectionIntro
@@ -332,7 +319,7 @@ export default function HomePage() {
 
       <section
         id="how-it-works"
-        className="scroll-mt-[80px] bg-[#173154] py-20 text-white"
+        className="scroll-mt-[80px] min-h-screen bg-[#173154] py-24 text-white"
       >
         <div className="mx-auto max-w-7xl px-6 sm:px-10 lg:px-12">
           <SectionIntro
@@ -364,7 +351,7 @@ export default function HomePage() {
       {/* Results / Social proof section: scroll-mt-[80px] for header offset, py-20 for spacing */}
       <section
         id="results"
-        className="scroll-mt-[80px] px-6 py-20 sm:px-10 lg:px-12"
+        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
       >
         <div className="mx-auto max-w-7xl">
           <SectionIntro
@@ -410,7 +397,7 @@ export default function HomePage() {
       {/* Pricing section: scroll-mt-[80px] for anchor navigation, py-20 for vertical spacing */}
       <section
         id="pricing"
-        className="scroll-mt-[80px] px-6 py-20 sm:px-10 lg:px-12"
+        className="scroll-mt-[80px] min-h-screen px-6 py-24 sm:px-10 lg:px-12"
       >
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 rounded-[2.5rem] bg-[#173154] px-6 py-8 text-white shadow-[0_35px_90px_rgba(17,36,63,0.22)] sm:px-8 sm:py-10 lg:grid-cols-[1fr_0.85fr] lg:px-12 lg:py-12">
