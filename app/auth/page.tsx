@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { createClient } from '@supabase/supabase-js';
 
 type View = 'login' | 'signup';
 
@@ -59,16 +60,47 @@ function Divider() {
 
 // ─── Login view ───────────────────────────────────────────────────────────────
 function LoginView({ onSwitch }: { onSwitch: () => void }) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    // TODO: replace with your auth call e.g. signIn('credentials', { email, password })
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
+
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      // Sign in with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        setError('Failed to log in');
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to practice or dashboard
+      router.push('/practice');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+      setLoading(false);
+    }
   }
 
   return (
@@ -77,6 +109,12 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Welcome back</h1>
         <p className="text-[15px] text-slate-500">Log in to continue your practice.</p>
       </div>
+
+      {error && (
+        <div className="mb-5 p-4 rounded-lg bg-red-50 border border-red-200">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <Field
@@ -143,18 +181,66 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
 
 // ─── Signup view ──────────────────────────────────────────────────────────────
 function SignupView({ onSwitch }: { onSwitch: () => void }) {
+  const router = useRouter();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    // TODO: replace with your auth call e.g. supabase.auth.signUp({ email, password })
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
+
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+
+      // Sign up with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        setLoading(false);
+        return;
+      }
+
+      if (!authData.user) {
+        setError('Failed to create account');
+        setLoading(false);
+        return;
+      }
+
+      // Insert user profile into users table
+      const { error: insertError } = await supabase.from('users').insert([
+        {
+          id: authData.user.id,
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (insertError) {
+        setError('Account created but profile setup failed: ' + insertError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Redirect to practice or dashboard
+      router.push('/practice');
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+      setLoading(false);
+    }
   }
 
   return (
@@ -163,6 +249,12 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
         <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
         <p className="text-[15px] text-slate-500">Start practicing for free — no credit card needed.</p>
       </div>
+
+      {error && (
+        <div className="mb-5 p-4 rounded-lg bg-red-50 border border-red-200">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div className="grid grid-cols-2 gap-3">
