@@ -259,11 +259,11 @@ export default function Header() {
             {user ? (
               /* ── LOGGED IN ── */
               <>
-                <Link href="/practice" className={`hdr-nav-link hide-mobile${pathname === '/practice' ? ' active' : ''}`}>
-                  Practice Hub
-                </Link>
                 <Link href="/dashboard" className={`hdr-nav-link hide-mobile${pathname === '/dashboard' ? ' active' : ''}`}>
                   Dashboard
+                </Link>
+                <Link href="/practice" className={`hdr-nav-link hide-mobile${pathname === '/practice' ? ' active' : ''}`}>
+                  Practice Hub
                 </Link>
 
                 <div style={{ width: 8 }} />

@@ -1,360 +1,372 @@
-'use client';
+ 'use client'
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-
-// ─── Data ────────────────────────────────────────────────────────────────────
-// Each blank uses {id:hiddenLetters} syntax embedded in the paragraph string.
-// prefix  → the visible letters shown BEFORE the input (e.g. "spe" in "spe___")
-// answer  → what the user must type (just the hidden portion)
-// full    → the complete word shown as a hint after wrong answers
-
-type Blank = {
-  id: number;
-  prefix: string;
-  answer: string;
-  full: string;
-};
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 
 type Passage = {
-  title: string;
-  topic: string;
-  paragraphs: string[];
-  blanks: Blank[];
-};
-
-const passage: Passage = {
-  title: 'Marine Ecosystems',
-  topic: 'Academic reading · Environment',
-  paragraphs: [
-    'Marine ecosystems are among the most diverse and productive environments on Earth. Coral reefs support an estimated 25% of all marine {1} despite covering less than 1% of the ocean floor. These vibrant communities depend on a delicate {2} between countless organisms, from microscopic algae to large predatory fish.',
-    'Ocean {3}ification, caused by increasing atmospheric carbon dioxide, has diminished the ability of corals to build their calcium carbonate skeletons. Rising water temperatures trigger coral bleaching, where corals {4} their symbiotic algae, causing them to turn white and ultimately perish.',
-    'Despite these threats, scientists are implementing innovative solutions. Marine protected areas have proven {5}ive in allowing coral populations to recover. Restoration projects involve {6}ating coral fragments in laboratories and transplanting them to degraded reefs.',
-  ],
-  // {n} tokens in paragraphs above reference these blank definitions by id.
-  blanks: [
-    { id: 1, prefix: '',       answer: 'species', full: 'species'    },
-    { id: 2, prefix: '',       answer: 'balance', full: 'balance'    },
-    { id: 3, prefix: '',       answer: 'acidif',  full: 'acidification' },
-    { id: 4, prefix: '',       answer: 'expel',   full: 'expel'      },
-    { id: 5, prefix: 'effect', answer: 'effect',  full: 'effective'  },
-    { id: 6, prefix: 'cultiv', answer: 'cultiv',  full: 'cultivating'},
-  ],
-};
-
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function formatTime(s: number) {
-  const m = Math.floor(s / 60).toString().padStart(2, '0');
-  const sec = (s % 60).toString().padStart(2, '0');
-  return `${m}:${sec}`;
+  id: string
+  text: string
+  topic: string
+  difficulty: number
 }
 
-// Splits a paragraph string on {n} tokens and returns an array of segments
-// with either plain text or a blank id.
-function tokenise(text: string): Array<{ type: 'text'; value: string } | { type: 'blank'; id: number }> {
-  const parts = text.split(/\{(\d+)\}/);
-  return parts.map((p, i) =>
-    i % 2 === 0
-      ? { type: 'text' as const, value: p }
-      : { type: 'blank' as const, id: parseInt(p) }
-  );
+const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
+  biology:    { bg: '#f0fdf4', text: '#15803d' },
+  history:    { bg: '#fffbeb', text: '#b45309' },
+  economics:  { bg: '#eff6ff', text: '#1d4ed8' },
+  science:    { bg: '#f5f3ff', text: '#6d28d9' },
+  geography:  { bg: '#fff1f2', text: '#be123c' },
+  technology: { bg: '#ecfeff', text: '#0e7490' },
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
-type Phase = 'welcome' | 'practice' | 'results';
-type CheckState = Record<number, boolean>;
+const DIFFICULTY_LABEL: Record<number, string> = {
+  1: 'Easy',
+  2: 'Medium',
+  3: 'Hard',
+}
+
+const DIFFICULTY_COLOR: Record<number, { bg: string; text: string }> = {
+  1: { bg: '#f0fdf4', text: '#15803d' },
+  2: { bg: '#fffbeb', text: '#b45309' },
+  3: { bg: '#fef2f2', text: '#dc2626' },
+}
+
+function getTitle(text: string, topic: string): string {
+  // Make a readable title from first ~6 words of the passage
+  const words = text.trim().split(' ').slice(0, 6).join(' ')
+  return words.length < text.length ? words + '…' : words
+}
+
+function getExcerpt(text: string): string {
+  return text.length > 120 ? text.slice(0, 120) + '…' : text
+}
+
+function getCategoryColor(topic: string) {
+  const key = topic?.toLowerCase().trim()
+  return CATEGORY_COLORS[key] ?? { bg: '#f9fafb', text: '#6b7280' }
+}
 
 export default function PracticePage() {
-  const [phase, setPhase] = useState<Phase>('welcome');
-  const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [seconds, setSeconds] = useState(0);
-  const [running, setRunning] = useState(false);
-  const [checked, setChecked] = useState<CheckState | null>(null);
-  const inputRefs = useRef<Record<number, HTMLInputElement | null>>({});
-  const orderedIds = passage.blanks.map((b) => b.id);
+  const router = useRouter()
+  const [passages, setPassages] = useState<Passage[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [filter, setFilter] = useState<string>('all')
 
-  // Timer
   useEffect(() => {
-    if (!running) return;
-    const id = setInterval(() => setSeconds((s) => s + 1), 1000);
-    return () => clearInterval(id);
-  }, [running]);
+    async function load() {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('passages')
+        .select('id, text, topic, difficulty')
+        .order('created_at', { ascending: false })
 
-  function handleStart() {
-    setPhase('practice');
-    setRunning(true);
-    // Focus first blank after render
-    setTimeout(() => inputRefs.current[orderedIds[0]]?.focus(), 80);
-  }
-
-  function handleChange(id: number, value: string) {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
-  }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>, id: number) {
-    if (e.key === 'Tab') {
-      e.preventDefault();
-      const idx = orderedIds.indexOf(id);
-      const next = orderedIds[idx + 1];
-      if (next !== undefined) {
-        inputRefs.current[next]?.focus();
+      if (error) {
+        setError('Could not load passages. Please try again.')
       } else {
-        (document.getElementById('check-btn') as HTMLButtonElement | null)?.focus();
+        setPassages(data ?? [])
       }
+      setLoading(false)
     }
-  }
+    load()
+  }, [])
 
-  function handleCheck() {
-    setRunning(false);
-    const result: CheckState = {};
-    passage.blanks.forEach((b) => {
-      const val = (answers[b.id] ?? '').toLowerCase().trim();
-      result[b.id] = val === b.answer.toLowerCase();
-    });
-    setChecked(result);
-    setPhase('results');
-  }
+  // Get unique topics for filter tabs
+  const topics = ['all', ...Array.from(new Set(passages.map(p => p.topic?.toLowerCase())))]
 
-  const correctCount = checked ? Object.values(checked).filter(Boolean).length : 0;
-  const total = passage.blanks.length;
-  const pct = Math.round((correctCount / total) * 100);
+  const filtered = filter === 'all'
+    ? passages
+    : passages.filter(p => p.topic?.toLowerCase() === filter)
 
-  // ── Render blank inline inside paragraph text ──
-  function renderBlank(blank: Blank) {
-    const isChecked = checked !== null;
-    const isCorrect = checked?.[blank.id];
-    const underscores = '_'.repeat(blank.answer.length);
-
-    let borderColor = '#378ADD';   // active blue
-    let bg = 'transparent';
-    let textColor = 'inherit';
-
-    if (isChecked) {
-      if (isCorrect) {
-        borderColor = '#3B6D11';
-        bg = '#EAF3DE';
-        textColor = '#27500A';
-      } else {
-        borderColor = '#A32D2D';
-        bg = '#FCEBEB';
-        textColor = '#791F1F';
-      }
-    }
-
-    return (
-      <span key={blank.id} className="inline-flex items-baseline gap-1">
-        {blank.prefix && (
-          <span className="font-mono tracking-wide">{blank.prefix}</span>
-        )}
-        <input
-          ref={(el) => { inputRefs.current[blank.id] = el; }}
-          id={`blank-${blank.id}`}
-          type="text"
-          value={answers[blank.id] ?? ''}
-          onChange={(e) => handleChange(blank.id, e.target.value)}
-          onKeyDown={(e) => handleKeyDown(e, blank.id)}
-          disabled={isChecked}
-          placeholder={underscores}
-          maxLength={blank.answer.length + 2}
-          autoComplete="off"
-          spellCheck={false}
-          style={{
-            borderBottom: `2px solid ${borderColor}`,
-            background: bg,
-            color: textColor,
-            minWidth: `${Math.max(blank.answer.length, 4) * 10}px`,
-            width: `${Math.max(blank.answer.length, 4) * 10}px`,
-          }}
-          className={[
-            'inline-block text-center font-mono tracking-widest text-base',
-            'outline-none bg-transparent transition-colors duration-150',
-            'pb-0.5 mx-0.5',
-            isChecked ? 'rounded-t cursor-not-allowed px-1.5' : 'cursor-text',
-          ].join(' ')}
-        />
-        {isChecked && !isCorrect && (
-          <span className="text-sm font-semibold text-emerald-700 ml-0.5 whitespace-nowrap">
-            {blank.full}
-          </span>
-        )}
-      </span>
-    );
-  }
-
-  // ── Welcome screen ──────────────────────────────────────────────────────────
-  if (phase === 'welcome') {
-    return (
-      <main className="min-h-screen bg-[#f8f9fa] flex items-center justify-center px-4">
-        <div className="w-full max-w-lg">
-          <div className="rounded-[2rem] bg-white border border-slate-200 shadow-[0_20px_50px_rgba(15,23,42,0.07)] p-10 text-center">
-            {/* Icon */}
-            <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50">
-              <svg className="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
-              </svg>
-            </div>
-
-            {/* Brand */}
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600 mb-3">
-              LexiLift · Free trial
-            </p>
-
-            <h1 className="text-3xl font-bold text-slate-950 tracking-tight mb-3">
-              Ready to test your vocabulary?
-            </h1>
-            <p className="text-base leading-7 text-slate-600 mb-8 max-w-sm mx-auto">
-              Fill in the missing letters inside a real academic passage and get instant feedback when you're done.
-            </p>
-
-            {/* Pills */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {['TOEFL-style', `${total} blanks`, '~3 minutes', 'Free'].map((label) => (
-                <span
-                  key={label}
-                  className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-
-            <button
-              onClick={handleStart}
-              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-lg shadow-blue-950/20 transition hover:bg-blue-500 active:scale-[0.98]"
-            >
-              Start practice
-            </button>
-
-            <p className="mt-5 text-xs text-slate-400">No account needed to try this exercise.</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  // ── Practice + Results screen ───────────────────────────────────────────────
   return (
-    <main className="min-h-screen bg-[#f8f9fa] px-4 py-12">
-      <div className="mx-auto max-w-2xl">
+    <>
+      <style>{`
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        {/* Passage card */}
-        <div className="rounded-[2rem] bg-white border border-slate-200 shadow-[0_20px_50px_rgba(15,23,42,0.07)] overflow-hidden">
+        body { background: #ffffff; font-family: 'Inter', sans-serif; }
 
-          {/* Card header */}
-          <div className="flex items-center justify-between px-8 py-5 border-b border-slate-100">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-600 mb-0.5">
-                {passage.topic}
-              </p>
-              <h2 className="text-lg font-semibold text-slate-950">{passage.title}</h2>
-            </div>
+        .practice-page {
+          max-width: 760px;
+          margin: 0 auto;
+          padding: 48px 24px 80px;
+        }
 
-            {/* Timer */}
-            <div className="flex items-center gap-2">
-              <span
-                className={[
-                  'h-2 w-2 rounded-full transition-colors',
-                  running ? 'bg-emerald-500' : 'bg-slate-300',
-                ].join(' ')}
-              />
-              <span className="tabular-nums text-sm font-medium text-slate-600">
-                {formatTime(seconds)}
-              </span>
-            </div>
-          </div>
+        /* PAGE HEADER */
+        .page-header { margin-bottom: 32px; }
 
-          {/* Passage body */}
-          <div className="px-8 py-7 space-y-5">
-            {passage.paragraphs.map((para, pIdx) => (
-              <p key={pIdx} className="text-[1.0625rem] leading-[1.9] text-slate-800">
-                {tokenise(para).map((token, tIdx) => {
-                  if (token.type === 'text') return <span key={tIdx}>{token.value}</span>;
-                  const blank = passage.blanks.find((b) => b.id === token.id);
-                  if (!blank) return null;
-                  return renderBlank(blank);
-                })}
-              </p>
+        .page-title {
+          font-size: 24px;
+          font-weight: 700;
+          color: #111827;
+          letter-spacing: -0.5px;
+          margin-bottom: 6px;
+        }
+
+        .page-sub {
+          font-size: 14px;
+          color: #6b7280;
+        }
+
+        /* FILTER TABS */
+        .filter-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-wrap: wrap;
+          margin-bottom: 28px;
+        }
+
+        .filter-btn {
+          font-size: 13px;
+          font-weight: 500;
+          color: #6b7280;
+          background: none;
+          border: 1px solid #e5e7eb;
+          padding: 5px 13px;
+          border-radius: 99px;
+          cursor: pointer;
+          transition: all 0.12s;
+          font-family: inherit;
+          text-transform: capitalize;
+        }
+        .filter-btn:hover { border-color: #d1d5db; color: #111827; }
+        .filter-btn.active {
+          background: #111827;
+          border-color: #111827;
+          color: #fff;
+        }
+
+        /* PASSAGE CARDS */
+        .cards-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .passage-card {
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 12px;
+          padding: 20px 24px;
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .passage-card:hover {
+          border-color: #d1d5db;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+        }
+
+        /* left: number */
+        .card-num {
+          font-size: 13px;
+          font-weight: 600;
+          color: #d1d5db;
+          width: 24px;
+          flex-shrink: 0;
+          text-align: center;
+        }
+
+        /* middle: content */
+        .card-body { flex: 1; min-width: 0; }
+
+        .card-badges {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 7px;
+        }
+
+        .badge-topic {
+          font-size: 11px;
+          font-weight: 600;
+          padding: 2px 9px;
+          border-radius: 99px;
+          text-transform: capitalize;
+          letter-spacing: 0.2px;
+        }
+
+        .badge-diff {
+          font-size: 11px;
+          font-weight: 500;
+          padding: 2px 9px;
+          border-radius: 99px;
+        }
+
+        .card-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 5px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .card-excerpt {
+          font-size: 13px;
+          color: #9ca3af;
+          line-height: 1.55;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        /* right: start btn */
+        .card-action { flex-shrink: 0; }
+
+        .btn-start {
+          background: #2563eb;
+          border: none;
+          color: #fff;
+          padding: 8px 18px;
+          border-radius: 8px;
+          font-family: inherit;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.12s;
+          white-space: nowrap;
+        }
+        .btn-start:hover { background: #1d4ed8; }
+
+        /* STATES */
+        .state-center {
+          text-align: center;
+          padding: 80px 0;
+        }
+
+        .state-icon { font-size: 32px; margin-bottom: 12px; }
+
+        .state-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: #111827;
+          margin-bottom: 6px;
+        }
+
+        .state-sub { font-size: 14px; color: #9ca3af; }
+
+        .spinner {
+          width: 28px; height: 28px;
+          border: 2.5px solid #e5e7eb;
+          border-top-color: #2563eb;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+          margin: 0 auto 16px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 560px) {
+          .passage-card { flex-wrap: wrap; gap: 12px; }
+          .card-num { display: none; }
+          .card-action { width: 100%; }
+          .btn-start { width: 100%; text-align: center; }
+        }
+      `}</style>
+
+      <div className="practice-page">
+        <div className="page-header">
+          <h1 className="page-title">Practice Hub</h1>
+          <p className="page-sub">Choose a passage and start filling in the blanks.</p>
+        </div>
+
+        {/* FILTER TABS */}
+        {!loading && passages.length > 0 && (
+          <div className="filter-row">
+            {topics.map(t => (
+              <button
+                key={t}
+                className={`filter-btn${filter === t ? ' active' : ''}`}
+                onClick={() => setFilter(t)}
+              >
+                {t === 'all' ? 'All' : t}
+              </button>
             ))}
           </div>
+        )}
 
-          {/* Check button */}
-          <div className="px-8 pb-7 flex justify-end">
-            <button
-              id="check-btn"
-              onClick={handleCheck}
-              disabled={checked !== null}
-              className={[
-                'rounded-full px-7 py-3 text-sm font-semibold transition',
-                checked === null
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-950/20 hover:bg-emerald-500 active:scale-[0.98]'
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed',
-              ].join(' ')}
-            >
-              Check answers
-            </button>
+        {/* LOADING */}
+        {loading && (
+          <div className="state-center">
+            <div className="spinner" />
+            <p className="state-sub">Loading passages…</p>
           </div>
-        </div>
+        )}
 
-        {/* Results panel — shown after check */}
-        {phase === 'results' && checked !== null && (
-          <div className="mt-5 space-y-4">
+        {/* ERROR */}
+        {!loading && error && (
+          <div className="state-center">
+            <div className="state-icon">⚠️</div>
+            <p className="state-title">Something went wrong</p>
+            <p className="state-sub">{error}</p>
+          </div>
+        )}
 
-            {/* Score bar */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { label: 'Score', value: `${correctCount}/${total}` },
-                { label: 'Accuracy', value: `${pct}%` },
-                { label: 'Time', value: formatTime(seconds) },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="rounded-[1.25rem] bg-white border border-slate-200 px-4 py-4 text-center"
-                >
-                  <p className="text-xs uppercase tracking-[0.22em] text-slate-500 mb-1">{item.label}</p>
-                  <p className="text-2xl font-semibold text-slate-950">{item.value}</p>
+        {/* EMPTY */}
+        {!loading && !error && filtered.length === 0 && (
+          <div className="state-center">
+            <div className="state-icon">📄</div>
+            <p className="state-title">No passages found</p>
+            <p className="state-sub">
+              {filter !== 'all' ? `No passages in "${filter}" yet.` : 'No passages in the database yet.'}
+            </p>
+          </div>
+        )}
+
+        {/* CARDS */}
+        {!loading && !error && filtered.length > 0 && (
+          <div className="cards-list">
+            {filtered.map((passage, i) => {
+              const cat = getCategoryColor(passage.topic)
+              const diff = DIFFICULTY_COLOR[passage.difficulty] ?? DIFFICULTY_COLOR[1]
+              const diffLabel = DIFFICULTY_LABEL[passage.difficulty] ?? 'Easy'
+
+              return (
+                <div className="passage-card" key={passage.id}>
+                  <div className="card-num">{i + 1}</div>
+
+                  <div className="card-body">
+                    <div className="card-badges">
+                      <span
+                        className="badge-topic"
+                        style={{ background: cat.bg, color: cat.text }}
+                      >
+                        {passage.topic || 'General'}
+                      </span>
+                      <span
+                        className="badge-diff"
+                        style={{ background: diff.bg, color: diff.text }}
+                      >
+                        {diffLabel}
+                      </span>
+                    </div>
+                    <div className="card-title">
+                      {getTitle(passage.text, passage.topic)}
+                    </div>
+                    <div className="card-excerpt">
+                      {getExcerpt(passage.text)}
+                    </div>
+                  </div>
+
+                  <div className="card-action">
+                    <button
+                      className="btn-start"
+                      onClick={() => router.push(`/practice/${passage.id}`)}
+                    >
+                      Start →
+                    </button>
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Upsell card */}
-            <div className="rounded-[2rem] bg-[#173154] p-7 text-white">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-200 mb-3">
-                {pct === 100
-                  ? 'Perfect score — you crushed it'
-                  : pct >= 60
-                  ? 'Solid effort — keep building'
-                  : 'Good start — practice makes perfect'}
-              </p>
-              <h3 className="text-2xl font-bold tracking-tight mb-2">
-                Unlock 50+ practice passages.
-              </h3>
-              <p className="text-sm leading-6 text-slate-300 mb-6 max-w-md">
-                Sign up free to get daily drills, progress tracking across sessions, and adaptive exercises that target your weak vocabulary areas.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="/auth?view=signup"
-                  className="inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-500"
-                >
-                  Sign up — it's free
-                </Link>
-                <Link
-                  href="/auth?view=login"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
-                >
-                  Log in
-                </Link>
-                <Link
-                  href="/"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
-                >
-                  Back to home
-                </Link>
-              </div>
-            </div>
+              )
+            })}
           </div>
         )}
       </div>
-    </main>
-  );
+    </>
+  )
 }

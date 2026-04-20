@@ -372,7 +372,7 @@ export default function Home() {
         <p className="hero-sub">
           Practice fill-in-the-blank exercises with real TOEFL-style passages. Build vocabulary and improve your reading comprehension skills.
         </p>
-        <button className="btn-cta" onClick={() => router.push('/practice')}>
+        <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
           Start Practicing Now
         </button>
         <p className="hero-note">Free to start · No credit card required</p>
@@ -442,7 +442,7 @@ export default function Home() {
       <section className="bottom-cta">
         <h2>Ready to Ace Your TOEFL Reading?</h2>
         <p>Join thousands of students improving their TOEFL scores through targeted practice.</p>
-        <button className="btn-cta" onClick={() => router.push('/practice')}>
+        <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
           Get Started Free
         </button>
       </section>
