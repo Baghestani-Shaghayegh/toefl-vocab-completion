@@ -62,6 +62,7 @@ export default function PracticePage() {
 
         .hub-wrap {
           max-width: 720px;
+          width: 700px;
           margin: 0 auto;
           padding: 48px 24px 80px;
         }
@@ -117,17 +118,17 @@ export default function PracticePage() {
           position: relative;
         }
 
-        .passage-card {
-          background: #fffef9;
-          border: 1.5px solid #d6d0c4;
-          border-bottom: none;
-          padding: 20px 28px 20px 28px;
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          position: relative;
-          transition: background 0.12s;
-        }
+       .passage-card {
+  background: #fffef9;
+  border: 1.5px solid #d6d0c4;
+  border-bottom: none;
+  padding: 22px 36px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  transition: background 0.12s;
+}
 
         /* ruled line at bottom of each card */
         .passage-card::after {
@@ -167,33 +168,31 @@ export default function PracticePage() {
 
         /* left: number */
         .card-num {
-          font-family: 'Caveat', cursive;
-          font-size: 15px;
-          font-weight: 600;
-          color: #ccc;
-          width: 22px;
-          flex-shrink: 0;
-          text-align: center;
-        }
+  font-family: 'Caveat', cursive;
+  font-size: 18px;
+  font-weight: 600;
+  color: #aaa;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+}
 
         /* middle */
         .card-body { flex: 1; min-width: 0; }
 
-        .card-meta {
-          display: flex;
-          align-items: center;
-          gap: 7px;
-          margin-bottom: 5px;
-        }
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 
-        .card-topic {
-          font-family: 'Caveat', cursive;
-          font-size: 12px;
-          font-weight: 600;
-          color: #999;
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-        }
+.card-topic {
+  font-family: 'Special Elite', cursive;
+  font-size: 15px;
+  color: #2a2a2a;
+}
+
+
 
         .card-dot {
           width: 3px; height: 3px;
@@ -202,11 +201,17 @@ export default function PracticePage() {
           flex-shrink: 0;
         }
 
-        .card-diff {
-          font-family: 'Caveat', cursive;
-          font-size: 12px;
-          color: #bbb;
-        }
+       .card-diff {
+  font-family: 'Caveat', cursive;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 10px;s
+  border-radius: 2px;
+  letter-spacing: 0.5px;
+}
+.diff-easy   { font-family: 'Caveat', cursive; font-size: 12px; font-weight: 600; color: #6a9e6a; }
+.diff-medium { font-family: 'Caveat', cursive; font-size: 12px; font-weight: 600; color: #b8924a; }
+.diff-hard   { font-family: 'Caveat', cursive; font-size: 12px; font-weight: 600; color: #b06060; }
 
         .card-excerpt {
           font-family: 'Special Elite', cursive;
@@ -276,13 +281,28 @@ export default function PracticePage() {
           .card-action { width: 100%; }
           .btn-start { width: 100%; text-align: center; }
         }
+
+        .btn-back {
+  font-family: 'Special Elite', cursive;
+  font-size: 14px;
+  color: #555;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+  display: block;
+  transition: color 0.12s;
+}
+.btn-back:hover { color: #111; }
       `}</style>
 
       <div className="hub-wrap">
         <div className="hub-header">
-          <h1 className="hub-title">Practice Hub</h1>
-          <p className="hub-sub">Choose a passage and fill in the blanks.</p>
-        </div>
+  <button className="btn-back" onClick={() => router.push('/')}>← Home</button>
+  <h1 className="hub-title">Practice Hub</h1>
+  <p className="hub-sub">Choose a passage and fill in the blanks.</p>
+</div>
 
         {/* FILTER TABS */}
         {!loading && passages.length > 0 && (
@@ -330,28 +350,23 @@ export default function PracticePage() {
         {/* CARDS */}
         {!loading && !error && filtered.length > 0 && (
           <div className="cards-list">
-            {filtered.map((passage, i) => (
-              <div className="passage-card" key={passage.id}>
-                <div className="card-num">{i + 1}</div>
-                <div className="card-body">
-                  <div className="card-meta">
-                    <span className="card-topic">{passage.topic || "General"}</span>
-                    <span className="card-dot" />
-                    <span className="card-diff">
-                      {DIFFICULTY_LABEL[passage.difficulty] ?? "Easy"}
-                    </span>
-                  </div>
-                  <div className="card-excerpt">{getExcerpt(passage.text)}</div>
-                </div>
-                <div className="card-action">
-                  <button
-                    className="btn-start"
-                    onClick={() => router.push(`/practice/${passage.id}`)}
-                  >
-                    Start →
-                  </button>
-                </div>
-              </div>
+   {filtered.map((passage, i) => (
+                <div className="passage-card" key={passage.id}>
+  <div className="card-num">{i + 1}</div>
+  <div className="card-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <div className="card-meta">
+      <span className={`diff-${(DIFFICULTY_LABEL[passage.difficulty] ?? 'Easy').toLowerCase()}`}>
+        {DIFFICULTY_LABEL[passage.difficulty] ?? 'Easy'}
+      </span>
+      <span className="card-topic">{passage.topic || 'General'}</span>
+    </div>
+    <div className="card-action">
+      <button className="btn-start" onClick={() => router.push(`/practice/${passage.id}`)}>
+        Start →
+      </button>
+    </div>
+  </div>
+</div>
             ))}
           </div>
         )}
