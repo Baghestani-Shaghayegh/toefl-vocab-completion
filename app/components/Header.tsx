@@ -61,14 +61,16 @@ export default function Header() {
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Caveat:wght@400;600&display=swap');
+
         .hdr {
           position: sticky;
           top: 0;
           z-index: 50;
           height: 60px;
-          background: rgba(255,255,255,0.96);
+          background: rgba(245,242,235,0.97);
           backdrop-filter: blur(8px);
-          border-bottom: 1px solid #f3f4f6;
+          border-bottom: 1px solid #d6d0c4;
         }
 
         .hdr-inner {
@@ -80,54 +82,52 @@ export default function Header() {
         }
 
         .hdr-logo {
-          font-size: 16px;
-          font-weight: 700;
-          color: #111827;
-          letter-spacing: -0.3px;
+          font-family: 'Special Elite', cursive;
+          font-size: 17px;
+          color: #1a1a1a;
           text-decoration: none;
           flex-shrink: 0;
+          letter-spacing: -0.2px;
         }
-        .hdr-logo span { color: #2563eb; }
 
-        /* right side — all items sit here in both states */
         .hdr-right {
           display: flex;
           align-items: center;
           gap: 4px;
         }
 
-        /* shared nav link style */
+        /* nav links */
         .hdr-nav-link {
+          font-family: 'Special Elite', cursive;
           font-size: 14px;
-          font-weight: 500;
-          color: #6b7280;
+          color: #888;
           text-decoration: none;
-          padding: 6px 11px;
-          border-radius: 7px;
+          padding: 5px 11px;
+          border-radius: 2px;
           transition: color 0.12s, background 0.12s;
           white-space: nowrap;
         }
-        .hdr-nav-link:hover { color: #111827; background: #f3f4f6; }
-        .hdr-nav-link.active { color: #111827; background: #f3f4f6; }
+        .hdr-nav-link:hover { color: #222; background: rgba(0,0,0,0.04); }
+        .hdr-nav-link.active { color: #222; background: rgba(0,0,0,0.05); }
 
-        /* divider between nav links and buttons */
+        /* separator */
         .hdr-sep {
           width: 1px;
-          height: 18px;
-          background: #e5e7eb;
+          height: 16px;
+          background: #d6d0c4;
           margin: 0 6px;
           flex-shrink: 0;
         }
 
+        /* ghost button */
         .hdr-btn-ghost {
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
+          color: #555;
           background: none;
-          border: 1px solid #e5e7eb;
-          color: #374151;
-          padding: 6px 14px;
-          border-radius: 7px;
-          font-family: inherit;
-          font-size: 14px;
-          font-weight: 500;
+          border: 1px solid #c8c2b8;
+          padding: 5px 14px;
+          border-radius: 2px;
           cursor: pointer;
           text-decoration: none;
           transition: all 0.12s;
@@ -135,57 +135,64 @@ export default function Header() {
           align-items: center;
           white-space: nowrap;
         }
-        .hdr-btn-ghost:hover { border-color: #d1d5db; color: #111827; }
+        .hdr-btn-ghost:hover { border-color: #999; color: #222; }
 
+        /* solid button */
         .hdr-btn-solid {
-          background: #2563eb;
-          border: none;
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
           color: #fff;
-          padding: 6px 14px;
-          border-radius: 7px;
-          font-family: inherit;
-          font-size: 14px;
-          font-weight: 600;
+          background: #222;
+          border: 1.5px solid #111;
+          padding: 5px 14px;
+          border-radius: 2px;
           cursor: pointer;
           text-decoration: none;
-          transition: background 0.12s;
           display: inline-flex;
           align-items: center;
           white-space: nowrap;
+          box-shadow: 2px 2px 0 #111;
+          transition: all 0.1s;
         }
-        .hdr-btn-solid:hover { background: #1d4ed8; }
+        .hdr-btn-solid:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 #111; }
 
         /* avatar button */
         .avatar-btn {
           display: flex;
           align-items: center;
           gap: 7px;
-          background: #f9fafb;
-          border: 1px solid #e5e7eb;
+          background: #fffef9;
+          border: 1px solid #c8c2b8;
           padding: 4px 10px 4px 5px;
-          border-radius: 99px;
+          border-radius: 2px;
           cursor: pointer;
           transition: all 0.12s;
           font-family: inherit;
+          box-shadow: 1px 1px 0 #d6d0c4;
         }
-        .avatar-btn:hover { background: #f3f4f6; border-color: #d1d5db; }
+        .avatar-btn:hover { background: #fffcf3; border-color: #aaa; }
 
         .avatar-circle {
           width: 26px; height: 26px;
           border-radius: 50%;
-          background: #2563eb;
-          color: #fff;
-          font-size: 10px;
-          font-weight: 700;
+          background: #555;
+          color: #fffef9;
+          font-family: 'Caveat', cursive;
+          font-size: 12px;
+          font-weight: 600;
           display: flex; align-items: center; justify-content: center;
           flex-shrink: 0;
         }
 
-        .avatar-name { font-size: 13px; font-weight: 500; color: #111827; }
+        .avatar-name {
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
+          color: #333;
+        }
 
         .avatar-chevron {
           width: 13px; height: 13px;
-          color: #9ca3af;
+          color: #aaa;
           transition: transform 0.12s;
           flex-shrink: 0;
         }
@@ -198,11 +205,11 @@ export default function Header() {
           position: absolute;
           right: 0;
           top: calc(100% + 8px);
-          width: 216px;
-          background: #fff;
-          border: 1px solid #e5e7eb;
-          border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.09), 0 2px 6px rgba(0,0,0,0.04);
+          width: 210px;
+          background: #fffef9;
+          border: 1.5px solid #d6d0c4;
+          border-radius: 3px;
+          box-shadow: 3px 4px 0 #d6d0c4, 5px 7px 0 #ece8de;
           overflow: hidden;
           animation: dd-in 0.12s ease;
         }
@@ -214,30 +221,46 @@ export default function Header() {
 
         .dd-user {
           padding: 11px 14px;
-          border-bottom: 1px solid #f3f4f6;
+          border-bottom: 1px solid #e8e2d8;
         }
-        .dd-user-name { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 1px; }
-        .dd-user-email { font-size: 12px; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .dd-user-name {
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
+          color: #222;
+          margin-bottom: 2px;
+        }
+        .dd-user-email {
+          font-family: 'Caveat', cursive;
+          font-size: 12px;
+          color: #aaa;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
         .dd-section { padding: 5px 0; }
-        .dd-section + .dd-section { border-top: 1px solid #f3f4f6; }
+        .dd-section + .dd-section { border-top: 1px solid #e8e2d8; }
 
         .dd-item {
           display: flex; align-items: center; gap: 9px;
           padding: 7px 14px;
-          font-size: 13px; font-weight: 500; color: #374151;
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
+          color: #444;
           text-decoration: none;
           transition: background 0.1s;
           cursor: pointer;
-          border: none; background: none;
-          width: 100%; font-family: inherit; text-align: left;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
         }
-        .dd-item:hover { background: #f9fafb; }
-        .dd-item.danger { color: #ef4444; }
-        .dd-item.danger:hover { background: #fef2f2; }
+        .dd-item:hover { background: rgba(0,0,0,0.03); }
+        .dd-item.danger { color: #b05050; }
+        .dd-item.danger:hover { background: #fdf0f0; }
 
-        .dd-icon { width: 15px; height: 15px; color: #9ca3af; flex-shrink: 0; }
-        .dd-item.danger .dd-icon { color: #fca5a5; }
+        .dd-icon { width: 14px; height: 14px; color: #bbb; flex-shrink: 0; }
+        .dd-item.danger .dd-icon { color: #d9a0a0; }
 
         @media (max-width: 600px) {
           .hdr-inner { padding: 0 16px; }
@@ -249,21 +272,16 @@ export default function Header() {
       <header className="hdr">
         <div className="hdr-inner">
 
-          {/* LOGO — always left */}
-          <Link href="/" className="hdr-logo">
-            TOEFL<span>Prep</span>
-          </Link>
+          <Link href="/" className="hdr-logo">TOEFLPrep</Link>
 
-          {/* RIGHT SIDE */}
           <div className="hdr-right">
             {user ? (
-              /* ── LOGGED IN ── */
               <>
-                <Link href="/dashboard" className={`hdr-nav-link hide-mobile${pathname === '/dashboard' ? ' active' : ''}`}>
-                  Dashboard
-                </Link>
                 <Link href="/practice" className={`hdr-nav-link hide-mobile${pathname === '/practice' ? ' active' : ''}`}>
                   Practice Hub
+                </Link>
+                <Link href="/dashboard" className={`hdr-nav-link hide-mobile${pathname === '/dashboard' ? ' active' : ''}`}>
+                  Dashboard
                 </Link>
 
                 <div style={{ width: 8 }} />
@@ -316,7 +334,6 @@ export default function Header() {
                 </div>
               </>
             ) : (
-              /* ── LOGGED OUT ── */
               <>
                 <a href="#features" className="hdr-nav-link hide-mobile">Features</a>
                 <a href="#pricing" className="hdr-nav-link hide-mobile">Pricing</a>
