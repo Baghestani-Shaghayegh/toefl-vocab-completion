@@ -4,19 +4,20 @@ import { useRouter } from 'next/navigation'
 import Header from './components/Header'
 
 const FREE_FEATURES = [
-  '5 practice passages per day',
-  'Timer mode — real exam countdown',
-  'Accuracy & progress tracking',
-  'Most-missed words report',
-  'Correct answers after each session',
+  '3 practice passages per day',
+  'Track your time as you complete each passage',
+  'See correct answers instantly after each attempt',
+  'Basic accuracy tracking',
 ]
 
 const PRO_FEATURES = [
-  'Unlimited daily practices',
-  'AI-generated passages adaptive to your level',
-  'AI explanations for every wrong answer',
-  'Full performance history',
-  'Priority support',
+  'Unlimited practice passages',
+  'Simulated exam timer for real test conditions',
+  'Identify your most missed words',
+  'Practice weak vocabulary in new sentences',
+  'Adaptive passages based on your level',
+  'AI explanations for every mistake',
+  'Full performance and progress history'
 ]
 
 const FEATURES = [
@@ -28,7 +29,7 @@ const FEATURES = [
   {
     icon: '⚡',
     title: 'Instant Feedback',
-    desc: 'Get immediate results and explanations to understand your mistakes and improve faster.',
+    desc: 'Get immediate results to understand your mistakes and improve with every session.',
   },
   {
     icon: '📚',
@@ -56,7 +57,7 @@ export default function Home() {
 
         /* ── HERO ── */
         .hero {
-          max-width: 680px;
+          max-width: 710px;
           margin: 0 auto;
           padding: 96px 24px 88px;
           text-align: center;
@@ -65,7 +66,7 @@ export default function Home() {
         .hero-eyebrow {
           display: inline-block;
           font-family: 'Caveat', cursive;
-          font-size: 13px;
+          font-size: 18px;
           font-weight: 600;
           color: #888;
           text-transform: uppercase;
@@ -87,7 +88,6 @@ export default function Home() {
           display: inline-block;
         }
 
-        /* hand-drawn underline effect */
         .hero h1 span::after {
           content: '';
           position: absolute;
@@ -101,8 +101,8 @@ export default function Home() {
 
         .hero-sub {
           font-family: 'Special Elite', cursive;
-          font-size: 16px;
-          color: #666;
+          font-size: 18px;
+          color: #555;
           line-height: 1.8;
           margin-bottom: 40px;
         }
@@ -112,11 +112,11 @@ export default function Home() {
           align-items: center;
           gap: 8px;
           font-family: 'Special Elite', cursive;
-          font-size: 15px;
+          font-size: 16px;
           color: #fff;
           background: #222;
           border: 1.5px solid #111;
-          padding: 12px 32px;
+          padding: 13px 34px;
           border-radius: 3px;
           cursor: pointer;
           box-shadow: 3px 3px 0 #111;
@@ -127,19 +127,12 @@ export default function Home() {
 
         .hero-note {
           margin-top: 16px;
-          font-family: 'Caveat', cursive;
-          font-size: 14px;
-          color: #aaa;
+          font-size: 16px;
+          color: #111;
+          font-weight: bold;
         }
 
         /* ── DIVIDER ── */
-        .divider {
-          border: none;
-          border-top: 1px solid #d6d0c4;
-          max-width: 720px;
-          margin: 0 auto;
-        }
-
         .divider-full {
           border: none;
           border-top: 1px solid #d6d0c4;
@@ -147,14 +140,14 @@ export default function Home() {
 
         /* ── FEATURES ── */
         .features {
-          max-width: 760px;
+          max-width: 800px;
           margin: 0 auto;
           padding: 80px 24px;
         }
 
         .section-eyebrow {
           font-family: 'Caveat', cursive;
-          font-size: 13px;
+          font-size: 18px;
           font-weight: 600;
           color: #aaa;
           text-transform: uppercase;
@@ -165,7 +158,7 @@ export default function Home() {
 
         .section-title {
           font-family: 'Special Elite', cursive;
-          font-size: clamp(22px, 3vw, 30px);
+          font-size: clamp(24px, 3vw, 32px);
           color: #111;
           text-align: center;
           margin-bottom: 48px;
@@ -178,12 +171,11 @@ export default function Home() {
           gap: 0;
         }
 
-        /* paper-stacked feature cards */
         .feat-card {
           background: #fffef9;
           border: 1.5px solid #d6d0c4;
           border-right: none;
-          padding: 28px 24px;
+          padding: 32px 28px;
           position: relative;
           transition: background 0.12s;
         }
@@ -191,10 +183,8 @@ export default function Home() {
         .feat-card:last-child { border-right: 1.5px solid #d6d0c4; }
         .feat-card:first-child { border-radius: 3px 0 0 3px; }
         .feat-card:last-child  { border-radius: 0 3px 3px 0; }
-
         .feat-card:hover { background: #fffcf3; }
 
-        /* ruled lines on feature cards */
         .feat-card::after {
           content: '';
           position: absolute;
@@ -210,32 +200,30 @@ export default function Home() {
         .feat-inner { position: relative; z-index: 1; }
 
         .feat-ico {
-          font-size: 22px;
-          margin-bottom: 12px;
+          font-size: 24px;
+          margin-bottom: 14px;
           display: block;
         }
 
         .feat-title {
           font-family: 'Special Elite', cursive;
-          font-size: 15px;
+          font-size: 17px;
           color: #111;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
         }
 
         .feat-desc {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 16px;
           color: #666;
           line-height: 1.7;
         }
 
         /* ── PRICING ── */
-        .pricing-wrap {
-          padding: 80px 24px;
-        }
+        .pricing-wrap { padding: 80px 24px; }
 
         .pricing-inner {
-          max-width: 720px;
+          max-width: 760px;
           margin: 0 auto;
         }
 
@@ -250,8 +238,10 @@ export default function Home() {
           background: #fffef9;
           border: 1.5px solid #d6d0c4;
           border-right: none;
-          padding: 32px 28px;
+          padding: 36px 32px;
           position: relative;
+          display: flex;
+          flex-direction: column;
         }
 
         .plan:last-child {
@@ -262,7 +252,6 @@ export default function Home() {
         .plan:first-child { border-radius: 3px 0 0 3px; }
         .plan:last-child  { border-radius: 0 3px 3px 0; }
 
-        /* ruled lines */
         .plan::after {
           content: '';
           position: absolute;
@@ -275,12 +264,11 @@ export default function Home() {
           border-radius: inherit;
         }
 
-        .plan-inner { position: relative; z-index: 1; }
+        .plan-inner { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
 
         .plan-badge {
           display: inline-block;
-          font-family: 'Caveat', cursive;
-          font-size: 12px;
+          font-size: 18px;
           font-weight: 600;
           color: #888;
           text-transform: uppercase;
@@ -292,16 +280,15 @@ export default function Home() {
 
         .plan-price {
           font-family: 'Special Elite', cursive;
-          font-size: 40px;
+          font-size: 42px;
           color: #111;
           letter-spacing: -1px;
           line-height: 1;
-          margin-bottom: 4px;
+          margin-bottom: 6px;
         }
 
         .plan-price sub {
-          font-family: 'Caveat', cursive;
-          font-size: 14px;
+          font-size: 17px;
           color: #aaa;
           vertical-align: baseline;
           letter-spacing: 0;
@@ -309,7 +296,7 @@ export default function Home() {
 
         .plan-tagline {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 15px;
           color: #777;
           line-height: 1.6;
           margin-bottom: 20px;
@@ -317,21 +304,21 @@ export default function Home() {
           border-bottom: 1px solid #d6d0c4;
         }
 
-        .plan-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+        .plan-list { list-style: none; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
 
         .plan-item {
           display: flex;
           align-items: flex-start;
           gap: 8px;
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 15px;
           color: #444;
           line-height: 1.4;
         }
 
         .chk {
           font-family: 'Caveat', cursive;
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 600;
           color: #6a9e6a;
           flex-shrink: 0;
@@ -341,11 +328,11 @@ export default function Home() {
         .plan-btn {
           display: block;
           width: 100%;
-          margin-top: 24px;
-          padding: 10px;
+          margin-top: 28px;
+          padding: 12px;
           border-radius: 2px;
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 15px;
           cursor: pointer;
           transition: all 0.1s;
           text-align: center;
@@ -377,7 +364,7 @@ export default function Home() {
 
         .bottom-cta h2 {
           font-family: 'Special Elite', cursive;
-          font-size: clamp(24px, 3.5vw, 34px);
+          font-size: clamp(26px, 3.5vw, 36px);
           color: #111;
           letter-spacing: -0.5px;
           line-height: 1.25;
@@ -386,7 +373,7 @@ export default function Home() {
 
         .bottom-cta p {
           font-family: 'Special Elite', cursive;
-          font-size: 15px;
+          font-size: 17px;
           color: #777;
           line-height: 1.7;
           margin-bottom: 32px;
@@ -401,18 +388,18 @@ export default function Home() {
           align-items: center;
         }
 
-.footer-logo {
-  font-family: 'Special Elite', cursive;
-  font-size: 20px;
-  color: #111;
-  letter-spacing: -0.3px;
-}
+        .footer-logo {
+          font-family: 'Special Elite', cursive;
+          font-size: 20px;
+          color: #111;
+          letter-spacing: -0.3px;
+        }
 
-.footer-copy {
-  font-family: 'Special Elite', cursive;
-  font-size: 15px;
-  color: #666;
-}
+        .footer-copy {
+          font-family: 'Special Elite', cursive;
+          font-size: 15px;
+          color: #666;
+        }
 
         @media (max-width: 700px) {
           .feat-grid { grid-template-columns: 1fr; }
@@ -434,7 +421,9 @@ export default function Home() {
         <span className="hero-eyebrow">TOEFL Reading Practice</span>
         <h1>Master TOEFL Reading <span>Word by Word</span></h1>
         <p className="hero-sub">
-          Practice fill-in-the-blank exercises with real TOEFL-style passages. Build vocabulary and improve your reading comprehension skills.
+          Practice fill-in-the-blank exercises with real TOEFL-style passages.
+          <br />
+          Build vocabulary and improve your reading comprehension skills.
         </p>
         <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
           Start Practicing Now
@@ -473,7 +462,7 @@ export default function Home() {
               <div className="plan-inner">
                 <span className="plan-badge">Free</span>
                 <p className="plan-price">$0 <sub>/ forever</sub></p>
-                <p className="plan-tagline">Everything you need to build a daily practice habit.</p>
+                <p className="plan-tagline">Everything you need to start practicing consistently</p>
                 <ul className="plan-list">
                   {FREE_FEATURES.map(f => (
                     <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
@@ -488,14 +477,14 @@ export default function Home() {
               <div className="plan-inner">
                 <span className="plan-badge highlight">Pro</span>
                 <p className="plan-price">$9 <sub>/ month</sub></p>
-                <p className="plan-tagline">For serious test-takers who need unlimited practice and AI-powered feedback.</p>
+                <p className="plan-tagline">Unlimited practice with AI-powered feedback and progress tracking</p>
                 <ul className="plan-list">
                   {PRO_FEATURES.map(f => (
                     <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
                   ))}
                 </ul>
-                <button className="plan-btn plan-btn-filled" onClick={() => router.push('/signup')}>
-                  Start free trial
+                <button className="plan-btn plan-btn-filled" onClick={() => router.push('/auth?view=signup')}>
+                  Upgrade to Pro
                 </button>
               </div>
             </div>
@@ -507,8 +496,8 @@ export default function Home() {
 
       {/* BOTTOM CTA */}
       <section className="bottom-cta">
-        <h2>Ready to Ace Your TOEFL Reading?</h2>
-        <p>Join thousands of students improving their TOEFL scores through targeted practice.</p>
+        <h2>Ready to improve your TOEFL reading score?</h2>
+        <p>Make progress every day with real exam-style passages.</p>
         <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
           Get Started Free
         </button>
@@ -518,7 +507,7 @@ export default function Home() {
 
       <footer>
         <div className="footer-logo">Lexivo</div>
-<div className="footer-copy">© {new Date().getFullYear()} Lexivo · Built for TOEFL test takers</div>
+        <div className="footer-copy">© {new Date().getFullYear()} Lexivo · Practice smarter. Score higher.</div>
       </footer>
     </>
   )
