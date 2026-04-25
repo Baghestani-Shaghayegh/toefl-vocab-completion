@@ -339,7 +339,7 @@ export default function Header() {
                 <a href="#pricing" className="hdr-nav-link hide-mobile">Pricing</a>
                 <div className="hdr-sep hide-mobile" />
                 <Link href="/auth?view=login" className="hdr-btn-ghost">Log in</Link>
-                <Link href="/practice" className="hdr-btn-solid">Start free</Link>
+                <Link href="/practice/sample" className="hdr-btn-solid">Start free</Link>
               </>
             )}
           </div>
