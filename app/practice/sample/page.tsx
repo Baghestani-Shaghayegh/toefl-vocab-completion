@@ -562,7 +562,7 @@ export default function SamplePage() {
                   Sign up free to get daily drills, progress tracking, and adaptive exercises that target your weak vocabulary areas.
                 </p>
                 <div className="upsell-btns">
-                  <a href="/signup" className="btn-solid">Sign up free</a>
+                  <a href="/auth?view=signup" className="btn-solid">Sign up free</a>
                   <button className="btn-ghost" onClick={() => router.push('/')}>← Home</button>
                 </div>
               </div>
