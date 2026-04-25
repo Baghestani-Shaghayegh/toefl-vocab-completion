@@ -269,7 +269,7 @@ export default function ExercisePage() {
     }
   }
 
-function handleCheck() {
+async function handleCheck() {
   clearInterval(timerRef.current!)
   const res: Record<number, boolean> = {}
   tokens.forEach(t => {
@@ -280,13 +280,35 @@ function handleCheck() {
   })
   setResults(res)
   setChecked(true)
-  // ── save to localStorage ──
-  if (id) {
-    const stored = localStorage.getItem('completed_passages')
-    const prev: string[] = stored ? JSON.parse(stored) : []
-    if (!prev.includes(id)) {
-      localStorage.setItem('completed_passages', JSON.stringify([...prev, id]))
+
+  // save session to Supabase
+  try {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user && passage) {
+      const correct = Object.values(res).filter(Boolean).length
+      const total = Object.values(res).length
+      await supabase.from('sessions').insert({
+        user_id: user.id,
+        passage_id: passage.id,
+        score: correct,
+        total: total,
+        time_seconds: seconds,
+        answers: answers,
+      })
+
+      // also log individual word attempts
+      const attempts = tokens
+        .filter(t => t.shouldMask)
+        .map(t => ({
+          user_id: user.id,
+          word: t.clean,
+          correct: res[t.wordIndex] ?? false,
+        }))
+      await supabase.from('word_attempts').insert(attempts)
     }
+  } catch (e) {
+    console.error('Failed to save session:', e)
   }
 }
 
