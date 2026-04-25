@@ -80,15 +80,15 @@ export default function Header() {
           align-items: center;
           justify-content: space-between;
         }
-
-        .hdr-logo {
-          font-family: 'Special Elite', cursive;
-          font-size: 17px;
-          color: #1a1a1a;
-          text-decoration: none;
-          flex-shrink: 0;
-          letter-spacing: -0.2px;
-        }
+.hdr-logo {
+  font-family: 'Special Elite', cursive;
+  font-size: 20px;
+  color: #111;
+  text-decoration: none;
+  flex-shrink: 0;
+  letter-spacing: -0.3px;
+  font-weight: bold;
+}
 
         .hdr-right {
           display: flex;
@@ -99,7 +99,7 @@ export default function Header() {
         /* nav links */
         .hdr-nav-link {
           font-family: 'Special Elite', cursive;
-          font-size: 14px;
+          font-size: 16px;
           color: #888;
           text-decoration: none;
           padding: 5px 11px;
@@ -122,7 +122,7 @@ export default function Header() {
         /* ghost button */
         .hdr-btn-ghost {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 16px;
           color: #555;
           background: none;
           border: 1px solid #c8c2b8;
@@ -140,7 +140,7 @@ export default function Header() {
         /* solid button */
         .hdr-btn-solid {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 16px;
           color: #fff;
           background: #222;
           border: 1.5px solid #111;
@@ -186,7 +186,7 @@ export default function Header() {
 
         .avatar-name {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 15px;
           color: #333;
         }
 
@@ -225,41 +225,43 @@ export default function Header() {
         }
         .dd-user-name {
           font-family: 'Special Elite', cursive;
-          font-size: 13px;
+          font-size: 15px;
           color: #222;
           margin-bottom: 2px;
         }
-        .dd-user-email {
-          font-family: 'Caveat', cursive;
-          font-size: 12px;
-          color: #aaa;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
+.dd-user-email {
+  font-family: 'Special Elite', cursive;
+  font-size: 13px;
+  color: #666;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
         .dd-section { padding: 5px 0; }
         .dd-section + .dd-section { border-top: 1px solid #e8e2d8; }
 
-        .dd-item {
-          display: flex; align-items: center; gap: 9px;
-          padding: 7px 14px;
-          font-family: 'Special Elite', cursive;
-          font-size: 13px;
-          color: #444;
-          text-decoration: none;
-          transition: background 0.1s;
-          cursor: pointer;
-          border: none;
-          background: none;
-          width: 100%;
-          text-align: left;
-        }
+.dd-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px;
+  padding: 7px 14px;
+  font-family: 'Special Elite', cursive;
+  font-size: 13px;
+  color: #444;
+  text-decoration: none;
+  transition: background 0.1s;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
         .dd-item:hover { background: rgba(0,0,0,0.03); }
         .dd-item.danger { color: #b05050; }
         .dd-item.danger:hover { background: #fdf0f0; }
 
-        .dd-icon { width: 14px; height: 14px; color: #bbb; flex-shrink: 0; }
+        .dd-icon { width: 14px; height: 14px; color: #bbb; flex-shrink: 0; margin-bottom: 5px; }
         .dd-item.danger .dd-icon { color: #d9a0a0; }
 
         @media (max-width: 600px) {
@@ -272,7 +274,7 @@ export default function Header() {
       <header className="hdr">
         <div className="hdr-inner">
 
-          <Link href="/" className="hdr-logo">TOEFLPrep</Link>
+          <Link href="/" className="hdr-logo">Lexivo</Link>
 
           <div className="hdr-right">
             {user ? (
@@ -304,8 +306,8 @@ export default function Header() {
                       <div className="dd-section">
                         <Link href="/dashboard" className="dd-item" onClick={() => setDropdownOpen(false)}>
                           <svg className="dd-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                          </svg>
+  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+</svg>
                           Dashboard
                         </Link>
                         <Link href="/practice" className="dd-item" onClick={() => setDropdownOpen(false)}>
@@ -338,7 +340,7 @@ export default function Header() {
                 <a href="#features" className="hdr-nav-link hide-mobile">Features</a>
                 <a href="#pricing" className="hdr-nav-link hide-mobile">Pricing</a>
                 <div className="hdr-sep hide-mobile" />
-                <Link href="/auth?view=login" className="hdr-btn-ghost">Log in</Link>
+                <Link href="/auth?view=login" className="hdr-btn-ghost">Sign in</Link>
                 <Link href="/practice/sample" className="hdr-btn-solid">Start free</Link>
               </>
             )}

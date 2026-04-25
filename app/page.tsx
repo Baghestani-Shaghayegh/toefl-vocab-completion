@@ -401,17 +401,18 @@ export default function Home() {
           align-items: center;
         }
 
-        .footer-logo {
-          font-family: 'Special Elite', cursive;
-          font-size: 15px;
-          color: #333;
-        }
+.footer-logo {
+  font-family: 'Special Elite', cursive;
+  font-size: 20px;
+  color: #111;
+  letter-spacing: -0.3px;
+}
 
-        .footer-copy {
-          font-family: 'Caveat', cursive;
-          font-size: 13px;
-          color: #bbb;
-        }
+.footer-copy {
+  font-family: 'Special Elite', cursive;
+  font-size: 15px;
+  color: #666;
+}
 
         @media (max-width: 700px) {
           .feat-grid { grid-template-columns: 1fr; }
@@ -516,8 +517,8 @@ export default function Home() {
       <hr className="divider-full" />
 
       <footer>
-        <div className="footer-logo">TOEFLPrep</div>
-        <div className="footer-copy">© {new Date().getFullYear()} TOEFLPrep</div>
+        <div className="footer-logo">Lexivo</div>
+<div className="footer-copy">© {new Date().getFullYear()} Lexivo · Built for TOEFL test takers</div>
       </footer>
     </>
   )
