@@ -59,8 +59,13 @@ export default function Home() {
         .hero {
           max-width: 710px;
           margin: 0 auto;
-          padding: 96px 24px 88px;
+          padding: 0 24px;
           text-align: center;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
         }
 
         .hero-eyebrow {
@@ -142,7 +147,11 @@ export default function Home() {
         .features {
           max-width: 800px;
           margin: 0 auto;
-          padding: 80px 24px;
+          padding: 60px 24px;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
 
         .section-eyebrow {
@@ -220,7 +229,7 @@ export default function Home() {
         }
 
         /* ── PRICING ── */
-        .pricing-wrap { padding: 80px 24px; }
+        .pricing-wrap { padding: 60px 24px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
 
         .pricing-inner {
           max-width: 760px;
