@@ -269,18 +269,26 @@ export default function ExercisePage() {
     }
   }
 
-  function handleCheck() {
-    clearInterval(timerRef.current!)
-    const res: Record<number, boolean> = {}
-    tokens.forEach(t => {
-      if (!t.shouldMask) return
-      const typed = answers[t.wordIndex] ?? ''
-      const correct = (t.hiddenIndices ?? []).map(i => t.clean[i]).join('')
-      res[t.wordIndex] = typed.toLowerCase() === correct.toLowerCase()
-    })
-    setResults(res)
-    setChecked(true)
+function handleCheck() {
+  clearInterval(timerRef.current!)
+  const res: Record<number, boolean> = {}
+  tokens.forEach(t => {
+    if (!t.shouldMask) return
+    const typed = answers[t.wordIndex] ?? ''
+    const correct = (t.hiddenIndices ?? []).map(i => t.clean[i]).join('')
+    res[t.wordIndex] = typed.toLowerCase() === correct.toLowerCase()
+  })
+  setResults(res)
+  setChecked(true)
+  // ── save to localStorage ──
+  if (id) {
+    const stored = localStorage.getItem('completed_passages')
+    const prev: string[] = stored ? JSON.parse(stored) : []
+    if (!prev.includes(id)) {
+      localStorage.setItem('completed_passages', JSON.stringify([...prev, id]))
+    }
   }
+}
 
   function handleNextPassage() {
     if (!passage) return

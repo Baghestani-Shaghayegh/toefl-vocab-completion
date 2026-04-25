@@ -23,10 +23,17 @@ function getExcerpt(text: string): string {
 
 export default function PracticePage() {
   const router = useRouter();
-  const [passages, setPassages] = useState<Passage[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [filter, setFilter] = useState<string>("all");
+const [passages, setPassages] = useState<Passage[]>([])
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState('')
+const [filter, setFilter] = useState<string>('all')
+const [completed, setCompleted] = useState<Set<string>>(new Set())
+
+// Load completed passage ids from localStorage
+useEffect(() => {
+  const stored = localStorage.getItem('completed_passages')
+  if (stored) setCompleted(new Set(JSON.parse(stored)))
+}, [])
 
   useEffect(() => {
     async function load() {
@@ -227,21 +234,38 @@ export default function PracticePage() {
         /* right: start btn */
         .card-action { flex-shrink: 0; }
 
-        .btn-start {
-          font-family: 'Special Elite', cursive;
-          font-size: 13px;
-          color: #222;
-          background: #fffef9;
-          border: 1.5px solid #888;
-          padding: 6px 16px;
-          border-radius: 2px;
-          cursor: pointer;
-          box-shadow: 2px 2px 0 #aaa;
-          transition: all 0.1s;
-          white-space: nowrap;
-        }
-        .btn-start:hover  { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 #aaa; }
-        .btn-start:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 #aaa; }
+.btn-start {
+min-width: 90px;
+  font-family: 'Special Elite', cursive;
+  font-size: 13px;
+  border: 1.5px solid;
+  padding: 6px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.1s;
+  white-space: nowrap;
+}
+.btn-start:hover  { transform: translate(-1px,-1px); }
+.btn-start:active { transform: translate(1px,1px); }
+
+.btn-go {
+  color: #fff;
+  background: #222;
+  border-color: #111;
+  box-shadow: 2px 2px 0 #111;
+}
+.btn-go:hover  { box-shadow: 3px 3px 0 #111; }
+.btn-go:active { box-shadow: 1px 1px 0 #111; }
+
+.btn-done {
+min-width: 90px;
+  color: #999;
+  background: #f5f2eb;
+  border-color: #ccc;
+  box-shadow: 1px 1px 0 #ccc;
+}
+.btn-done:hover  { box-shadow: 1px 1px 0 #ccc; transform: none; }
+.btn-done:active { box-shadow: 1px 1px 0 #ccc; transform: none; }
 
         /* STATES */
         .state-center {
@@ -360,11 +384,14 @@ export default function PracticePage() {
       </span>
       <span className="card-topic">{passage.topic || 'General'}</span>
     </div>
-    <div className="card-action">
-      <button className="btn-start" onClick={() => router.push(`/practice/${passage.id}`)}>
-        Start →
-      </button>
-    </div>
+<div className="card-action">
+  <button
+    className={`btn-start${completed.has(passage.id) ? ' btn-done' : ' btn-go'}`}
+    onClick={() => router.push(`/practice/${passage.id}`)}
+  >
+    {completed.has(passage.id) ? 'Done' : 'Start →'}
+  </button>
+</div>
   </div>
 </div>
             ))}
