@@ -107,11 +107,10 @@ function WordSlots({
         const isHidden = (token.hiddenIndices ?? []).includes(ci)
 
         if (!isHidden) {
-          // visible letter — just render it
           return (
             <span key={ci} style={{
               fontSize: 16,
-              fontFamily: '"Special Elite", cursive',
+              fontFamily: 'Inter, sans-serif',
               color: '#222',
               lineHeight: 1.4,
             }}>
@@ -406,10 +405,10 @@ async function handleCheck() {
           color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;
         }
 
-        .passage-text {
-          font-family: 'Special Elite', cursive;
-          font-size: 16px; line-height: 2.1; color: #222;
-        }
+.passage-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px; line-height: 2.1; color: #222;
+}
 
         .results-section { margin-top: 32px; }
         .results-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
@@ -478,9 +477,9 @@ async function handleCheck() {
 
             <div className="passage-text">
               {tokens.map((t, i) => {
-                if (!t.shouldMask) {
-                  return <span key={i}>{i > 0 ? ' ' : ''}{t.original}</span>
-                }
+if (!t.shouldMask) {
+  return <span key={i} style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: '#222' }}>{i > 0 ? ' ' : ''}{t.original}</span>
+}
                 return (
                   <span key={i} style={{ whiteSpace: 'nowrap' }}>
                     {i > 0 ? ' ' : ''}

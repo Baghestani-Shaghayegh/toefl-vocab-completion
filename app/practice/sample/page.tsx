@@ -91,7 +91,7 @@ function WordSlots({
 
         if (!isHidden) {
           return (
-            <span key={ci} style={{ fontSize: 16, fontFamily: '"Special Elite", cursive', color: '#222', lineHeight: 1.4 }}>
+            <span key={ci} style={{ fontSize: 16, fontFamily: 'Inter, sans-serif', color: '#222', lineHeight: 1.4 }}>
               {letter}
             </span>
           )
@@ -125,7 +125,7 @@ function WordSlots({
         return (
           <span key={ci} style={{
             display: 'inline-block', width: 11, textAlign: 'center',
-            fontSize: 16, fontFamily: '"Special Elite", cursive',
+            fontSize: 16, fontFamily: 'Inter, sans-serif',
             color, borderBottom: `1.5px solid ${borderColor}`,
             lineHeight: 1.4, paddingBottom: 1,
             animation: isActiveCursor ? 'slot-blink 1s step-end infinite' : 'none',
@@ -135,7 +135,7 @@ function WordSlots({
         )
       })}
       {token.punct && (
-        <span style={{ fontSize: 16, fontFamily: '"Special Elite", cursive', color: '#222' }}>
+        <span style={{ fontSize: 16, fontFamily: 'Inter, sans-serif', color: '#222' }}>
           {token.punct}
         </span>
       )}
@@ -368,9 +368,9 @@ export default function SamplePage() {
         }
 
         .passage-text {
-          font-family: 'Special Elite', cursive;
-          font-size: 16px; line-height: 2.1; color: #222;
-        }
+  font-family: 'Inter', sans-serif;
+  font-size: 16px; line-height: 2.1; color: #222;
+}
 
         /* RESULTS */
         .results-section { margin-top: 32px; }
@@ -500,9 +500,9 @@ export default function SamplePage() {
               <div className="topic-label">{passage?.topic || 'General'}</div>
               <div className="passage-text">
                 {tokens.map((t, i) => {
-                  if (!t.shouldMask) {
-                    return <span key={i}>{i > 0 ? ' ' : ''}{t.original}</span>
-                  }
+if (!t.shouldMask) {
+  return <span key={i} style={{ fontFamily: 'Inter, sans-serif', fontSize: 16, color: '#222' }}>{i > 0 ? ' ' : ''}{t.original}</span>
+}
                   return (
                     <span key={i} style={{ whiteSpace: 'nowrap' }}>
                       {i > 0 ? ' ' : ''}
