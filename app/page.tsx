@@ -56,17 +56,17 @@ export default function Home() {
         }
 
         /* ── HERO ── */
-        .hero {
-          max-width: 710px;
-          margin: 0 auto;
-          padding: 0 24px;
-          text-align: center;
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
+.hero {
+  max-width: 710px;
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
         .hero-eyebrow {
           display: inline-block;
@@ -229,7 +229,7 @@ export default function Home() {
         }
 
         /* ── PRICING ── */
-        .pricing-wrap { padding: 60px 24px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+        .pricing-wrap { padding: 80px 24px; min-height: calc(100vh - 60px); display: flex; flex-direction: column; justify-content: center; }
 
         .pricing-inner {
           max-width: 760px;
