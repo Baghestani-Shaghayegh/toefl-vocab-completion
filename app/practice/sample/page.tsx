@@ -204,23 +204,24 @@ export default function SamplePage() {
     setFocusedIndex(wordIndex)
   }
 
-  function goNext(currentWordIndex: number) {
-    const pos = maskIndices.indexOf(currentWordIndex)
-    if (pos < maskIndices.length - 1) focusSlot(maskIndices[pos + 1])
-    else handleCheck()
-  }
+function goNext(currentWordIndex: number, currentAnswers?: Record<number, string>) {
+  const pos = maskIndices.indexOf(currentWordIndex)
+  if (pos < maskIndices.length - 1) focusSlot(maskIndices[pos + 1])
+  else handleCheck(currentAnswers)
+}
 
-  function handleType(wordIndex: number, ch: string) {
-    const token = tokens.find(t => t.wordIndex === wordIndex)
-    if (!token) return
-    const current = answers[wordIndex] ?? ''
-    if (current.length >= token.answerLength) return
-    const next = current + ch
-    setAnswers(prev => ({ ...prev, [wordIndex]: next }))
-    if (next.length >= token.answerLength) {
-      setTimeout(() => goNext(wordIndex), 80)
-    }
+function handleType(wordIndex: number, ch: string) {
+  const token = tokens.find(t => t.wordIndex === wordIndex)
+  if (!token) return
+  const current = answers[wordIndex] ?? ''
+  if (current.length >= token.answerLength) return
+  const next = current + ch
+  const newAnswers = { ...answers, [wordIndex]: next }
+  setAnswers(newAnswers)
+  if (next.length >= token.answerLength) {
+    setTimeout(() => goNext(wordIndex, newAnswers), 80)
   }
+}
 
   function handleBackspace(wordIndex: number) {
     const current = answers[wordIndex] ?? ''
@@ -232,18 +233,19 @@ export default function SamplePage() {
     }
   }
 
-  function handleCheck() {
-    clearInterval(timerRef.current!)
-    const res: Record<number, boolean> = {}
-    tokens.forEach(t => {
-      if (!t.shouldMask) return
-      const typed = answers[t.wordIndex] ?? ''
-      const correct = (t.hiddenIndices ?? []).map(i => t.clean[i]).join('')
-      res[t.wordIndex] = typed.toLowerCase() === correct.toLowerCase()
-    })
-    setResults(res)
-    setChecked(true)
-  }
+function handleCheck(currentAnswers?: Record<number, string>) {
+  clearInterval(timerRef.current!)
+  const answersToUse = currentAnswers ?? answers
+  const res: Record<number, boolean> = {}
+  tokens.forEach(t => {
+    if (!t.shouldMask) return
+    const typed = answersToUse[t.wordIndex] ?? ''
+    const correct = (t.hiddenIndices ?? []).map(i => t.clean[i]).join('')
+    res[t.wordIndex] = typed.toLowerCase() === correct.toLowerCase()
+  })
+  setResults(res)
+  setChecked(true)
+}
 
   const m = Math.floor(seconds / 60)
   const s = seconds % 60
@@ -310,10 +312,6 @@ export default function SamplePage() {
         }
         .welcome-inner { position: relative; z-index: 1; }
 
-        .welcome-eyebrow {
-          font-family: 'Caveat', cursive; font-size: 13px; font-weight: 600;
-          color: #aaa; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px;
-        }
 
         .welcome-title {
           font-family: 'Special Elite', cursive;
@@ -335,11 +333,6 @@ export default function SamplePage() {
         }
         .btn-start-welcome:hover  { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #111; }
         .btn-start-welcome:active { transform: translate(1px,1px);   box-shadow: 2px 2px 0 #111; }
-
-        .welcome-note {
-          font-family: 'Caveat', cursive; font-size: 13px;
-          color: #bbb; margin-top: 14px;
-        }
 
         /* PAPER CARD */
         .paper-card {
@@ -363,7 +356,7 @@ export default function SamplePage() {
         .paper-content { position: relative; z-index: 1; }
 
         .topic-label {
-          font-family: 'Caveat', cursive; font-size: 13px; font-weight: 600;
+          font-family: 'Caveat', cursive; font-size: 15px; font-weight: 600;
           color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;
         }
 
@@ -480,7 +473,6 @@ export default function SamplePage() {
         {!started && (
           <div className="welcome-card">
             <div className="welcome-inner">
-              <p className="welcome-eyebrow">Sample · {passage?.topic || 'Reading'}</p>
               <h1 className="welcome-title">Ready to test your vocabulary?</h1>
               <p className="welcome-desc">
                 Fill in the missing letters inside a real academic passage and get instant feedback when you're done.
@@ -488,7 +480,6 @@ export default function SamplePage() {
               <button className="btn-start-welcome" onClick={() => setStarted(true)}>
                 Start practice
               </button>
-              <p className="welcome-note">{maskedTokens.length} blanks · no account needed</p>
             </div>
           </div>
         )}
@@ -573,7 +564,7 @@ if (!t.shouldMask) {
         {/* CHECK BTN */}
         {started && !checked && (
           <div className="ex-footer">
-            <button className="btn-check" onClick={handleCheck}>Check answers</button>
+            <button className="btn-check" onClick={() => handleCheck()}>Check answers</button>
           </div>
         )}
 
