@@ -68,7 +68,7 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
       setLoading(false)
       return
     }
-    router.push('/')
+    router.push('/dashboard')
   }
 
   async function handleGoogle() {
@@ -79,24 +79,38 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
     })
   }
 
+  async function handleForgotPassword() {
+  if (!email.trim()) {
+    setFieldErrors({ email: 'Enter your email first' })
+    return
+  }
+  const supabase = createClient()
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/auth/reset-password`,
+  })
+  alert('Check your email for a password reset link.')
+}
+
   return (
     <>
-      <p className="auth-eyebrow">Welcome back</p>
-      <h1 className="auth-title">Log in to TOEFLPrep</h1>
-      <p className="auth-sub">Pick up where you left off</p>
+    <p className="auth-eyebrow">Welcome back</p>
+<h1 className="auth-title">Sign in to Lexivo</h1>
+<p className="auth-sub">Pick up where you left off</p>
 
       <form onSubmit={handleSubmit} className="auth-form">
-        <Field label="Email" type="email" placeholder="your@email.com"
+        <Field label="Email" type="email" placeholder="Enter your email"
           value={email} onChange={v => { setEmail(v); if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: '' }) }}
           autoComplete="email" error={fieldErrors.email} />
 
         <div className="field-wrap">
           <div className="field-label-row">
             <label className="field-label">Password</label>
-            <button type="button" className="forgot-btn">Forgot password?</button>
+            <button type="button" onClick={handleForgotPassword} className="forgot-btn">
+  Forgot password?
+</button>
           </div>
           <input
-            type="password" placeholder="••••••••" value={password}
+            type="password" placeholder="Enter your password" value={password}
             autoComplete="current-password"
             onChange={e => { setPassword(e.target.value); if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: '' }) }}
             className={`field-input${fieldErrors.password ? ' field-input-error' : ''}`}
@@ -105,8 +119,8 @@ function LoginView({ onSwitch }: { onSwitch: () => void }) {
         </div>
 
         <button type="submit" disabled={loading} className="btn-submit">
-          {loading ? 'Logging in…' : 'Log in'}
-        </button>
+  {loading ? 'Signing in…' : 'Sign in'}
+</button>
 
         <div className="auth-divider"><span>or</span></div>
 
@@ -155,7 +169,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
       id: authData.user.id, email,
       first_name: name, created_at: new Date().toISOString(),
     }])
-    router.push('/')
+    router.push('/dashboard')
   }
 
   async function handleGoogle() {
@@ -168,23 +182,23 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
   return (
     <>
-      <p className="auth-eyebrow">Get started</p>
-      <h1 className="auth-title">Create your account</h1>
-      <p className="auth-sub">Free to start · no credit card needed</p>
+<p className="auth-eyebrow">Get started free</p>
+<h1 className="auth-title">Create your account</h1>
+<p className="auth-sub">Track your progress and improve every day</p>
 
-      {error && <div className="auth-error">{error}</div>}
+      
 
       <form onSubmit={handleSubmit} className="auth-form">
-        <Field label="Name" placeholder="Your name"
+        <Field label="Name" placeholder="Enter your name"
           value={name} onChange={v => { setName(v); if (fieldErrors.name) setFieldErrors({ ...fieldErrors, name: '' }) }}
           autoComplete="name" error={fieldErrors.name} />
-        <Field label="Email" type="email" placeholder="your@email.com"
+        <Field label="Email" type="email" placeholder="Enter your email"
           value={email} onChange={v => { setEmail(v); if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: '' }) }}
           autoComplete="email" error={fieldErrors.email} />
-        <Field label="Password" type="password" placeholder="Min. 8 characters"
+        <Field label="Password" type="password" placeholder="Create a password"
           value={password} onChange={v => { setPassword(v); if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: '' }) }}
           autoComplete="new-password" error={fieldErrors.password} />
-
+{error && <div className="auth-error">{error}</div>}
         <button type="submit" disabled={loading} className="btn-submit">
           {loading ? 'Creating account…' : 'Create account'}
         </button>
@@ -204,7 +218,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
 
       <p className="auth-switch">
         Already have an account?{' '}
-        <button type="button" onClick={onSwitch} className="auth-switch-btn">Log in</button>
+        <button type="button" onClick={onSwitch} className="auth-switch-btn">Sign in</button>
       </p>
     </>
   )
@@ -216,7 +230,7 @@ export default function AuthPage() {
   const [view, setView] = useState<View>((viewParam as View) || 'login')
 
   useEffect(() => {
-    if (viewParam === 'signup' || viewParam === 'login') setView(viewParam)
+    if (viewParam === 'signup' || viewParam === 'login') setView(viewParam as View)
   }, [viewParam])
 
   return (
@@ -248,7 +262,7 @@ export default function AuthPage() {
           border-radius: 3px;
           padding: 44px 40px;
           width: 100%;
-          max-width: 420px;
+          max-width: 435px;
           position: relative;
           box-shadow: 3px 4px 0 #d6d0c4, 5px 7px 0 #ece8de;
         }
@@ -279,7 +293,7 @@ export default function AuthPage() {
         /* HEADER */
         .auth-eyebrow {
           font-family: 'Caveat', cursive;
-          font-size: 13px; font-weight: 600;
+          font-size: 15px; font-weight: 600;
           color: #aaa; text-transform: uppercase;
           letter-spacing: 2px; margin-bottom: 8px;
         }
@@ -291,18 +305,17 @@ export default function AuthPage() {
         }
 
         .auth-sub {
-          font-family: 'Caveat', cursive;
+          font-family: 'Special Elite', cursive;
           font-size: 15px; color: #888; margin-bottom: 28px;
         }
 
-        .auth-error {
-          font-family: 'Special Elite', cursive;
-          font-size: 13px; color: #b05050;
-          background: #fdf0f0; border: 1px solid #e0bbbb;
-          border-radius: 3px; padding: 10px 14px;
-          margin-bottom: 18px;
-          box-shadow: 1px 1px 0 #e0bbbb;
-        }
+.auth-error {
+  font-family: 'Special Elite', cursive;
+  font-size: 13px;
+  color: #b05050;
+  margin-bottom: 4px;
+  text-align: left;
+}
 
         /* FORM */
         .auth-form { display: flex; flex-direction: column; gap: 16px; }
@@ -320,7 +333,7 @@ export default function AuthPage() {
         }
 
         .forgot-btn {
-          font-family: 'Caveat', cursive;
+          font-family: 'Special Elite', cursive;
           font-size: 13px; font-weight: 600;
           color: #888; background: none; border: none;
           cursor: pointer; transition: color 0.12s;
@@ -343,8 +356,8 @@ export default function AuthPage() {
         .field-input::placeholder { color: #bbb; }
 
         .field-error {
-          font-family: 'Caveat', cursive;
-          font-size: 13px; font-weight: 600;
+          font-family: 'Special Elite', cursive;
+          font-size: 11px; font-weight: 600;
           color: #b05050;
         }
 
@@ -364,7 +377,7 @@ export default function AuthPage() {
 
         .auth-divider {
           display: flex; align-items: center; gap: 10px;
-          font-family: 'Caveat', cursive; font-size: 13px; color: #bbb;
+          font-family: 'Special Elite', cursive; font-size: 12px; color: #bbb;
         }
         .auth-divider::before,
         .auth-divider::after {
@@ -384,9 +397,11 @@ export default function AuthPage() {
         .btn-google:hover  { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 #d6d0c4; }
         .btn-google:active { transform: translate(1px,1px);   box-shadow: 1px 1px 0 #d6d0c4; }
 
+        .btn-google svg { filter: drop-shadow(1.5px 1.5px 0 #c8c2b8); margin-bottom: 5px; }
+
         /* FOOTER */
         .auth-terms {
-          font-family: 'Caveat', cursive;
+          font-family: 'Special Elite', cursive;
           font-size: 12px; color: #aaa;
           text-align: center; margin-top: 16px; line-height: 1.6;
         }
