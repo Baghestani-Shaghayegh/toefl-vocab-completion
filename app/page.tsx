@@ -3,22 +3,22 @@
 import { useRouter } from 'next/navigation'
 import Header from './components/Header'
 
-const FREE_FEATURES = [
-  '3 practice passages per day',
-  'Track your time as you complete each passage',
-  'See correct answers instantly after each attempt',
-  'Basic accuracy tracking',
-]
+// const FREE_FEATURES = [
+//   '3 practice passages per day',
+//   'Track your time as you complete each passage',
+//   'See correct answers instantly after each attempt',
+//   'Basic accuracy tracking',
+// ]
 
-const PRO_FEATURES = [
-  'Unlimited practice passages',
-  'Simulated exam timer for real test conditions',
-  'Identify your most missed words',
-  'Practice weak vocabulary in new sentences',
-  'Adaptive passages based on your level',
-  'AI explanations for every mistake',
-  'Full performance and progress history'
-]
+// const PRO_FEATURES = [
+//   'Unlimited practice passages',
+//   'Simulated exam timer for real test conditions',
+//   'Identify your most missed words',
+//   'Practice weak vocabulary in new sentences',
+//   'Adaptive passages based on your level',
+//   'AI explanations for every mistake',
+//   'Full performance and progress history'
+// ]
 
 const FEATURES = [
   {
@@ -437,7 +437,7 @@ export default function Home() {
         <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
           Start Practicing Now
         </button>
-        <p className="hero-note">Free to start · No credit card required</p>
+        {/* <p className="hero-note">Free to start · No credit card required</p> */}
       </section>
 
       <hr className="divider-full" />
@@ -461,54 +461,54 @@ export default function Home() {
 
       <hr className="divider-full" />
 
-      {/* PRICING */}
-      <section className="pricing-wrap" id="pricing">
-        <div className="pricing-inner">
-          <p className="section-eyebrow">Pricing</p>
-          <h2 className="section-title">Start free. Upgrade when you're ready.</h2>
-          <div className="plans">
-            <div className="plan">
-              <div className="plan-inner">
-                <span className="plan-badge">Free</span>
-                <p className="plan-price">$0 <sub>/ forever</sub></p>
-                <p className="plan-tagline">Everything you need to start practicing consistently</p>
-                <ul className="plan-list">
-                  {FREE_FEATURES.map(f => (
-                    <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
-                  ))}
-                </ul>
-                <button className="plan-btn plan-btn-outline" onClick={() => router.push('/practice/sample')}>
-                  Get started free
-                </button>
-              </div>
-            </div>
-            <div className="plan">
-              <div className="plan-inner">
-                <span className="plan-badge highlight">Pro</span>
-                <p className="plan-price">$9 <sub>/ month</sub></p>
-                <p className="plan-tagline">Unlimited practice with AI-powered feedback and progress tracking</p>
-                <ul className="plan-list">
-                  {PRO_FEATURES.map(f => (
-                    <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
-                  ))}
-                </ul>
-                <button className="plan-btn plan-btn-filled" onClick={() => router.push('/auth?view=signup')}>
-                  Upgrade to Pro
-                </button>
-              </div>
+      {/* PRICING — re-enable when paid plans are ready */}
+      {/*
+        <section className="pricing-wrap" id="pricing">
+          <div className="pricing-inner">
+            <p className="section-eyebrow">Pricing</p>
+            <h2 className="section-title">Start free. Upgrade when you're ready.</h2>
+            <div className="plans">
+          <div className="plan">
+            <div className="plan-inner">
+              <span className="plan-badge">Free</span>
+              <p className="plan-price">$0 <sub>/ forever</sub></p>
+              <p className="plan-tagline">Everything you need to start practicing consistently</p>
+              <ul className="plan-list">
+            {FREE_FEATURES.map(f => (
+              <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
+            ))}
+              </ul>
+              <button className="plan-btn plan-btn-outline" onClick={() => router.push('/practice/sample')}>
+            Get started free
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+          <div className="plan">
+            <div className="plan-inner">
+              <span className="plan-badge highlight">Pro</span>
+              <p className="plan-price">$9 <sub>/ month</sub></p>
+              <p className="plan-tagline">Unlimited practice with AI-powered feedback and progress tracking</p>
+              <ul className="plan-list">
+            {PRO_FEATURES.map(f => (
+              <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
+            ))}
+              </ul>
+              <button className="plan-btn plan-btn-filled" onClick={() => router.push('/auth?view=signup')}>
+            Upgrade to Pro
+              </button>
+            </div>
+          </div>
+            </div>
+          </div>
+        </section>
 
-      <hr className="divider-full" />
-
-      {/* BOTTOM CTA */}
+        <hr className="divider-full" />
+      */}
       <section className="bottom-cta">
         <h2>Ready to improve your TOEFL reading score?</h2>
         <p>Make progress every day with real exam-style passages.</p>
         <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
-          Get Started Free
+          Try it now
         </button>
       </section>
 

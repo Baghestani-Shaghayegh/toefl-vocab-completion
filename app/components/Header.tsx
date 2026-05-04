@@ -338,7 +338,7 @@ export default function Header() {
             ) : (
               <>
                 <a href="#features" className="hdr-nav-link hide-mobile">Features</a>
-                <a href="#pricing" className="hdr-nav-link hide-mobile">Pricing</a>
+                {/* <a href="#pricing" className="hdr-nav-link hide-mobile">Pricing</a> */}
                 <div className="hdr-sep hide-mobile" />
                 <Link href="/auth?view=login" className="hdr-btn-ghost">Sign in</Link>
                 <Link href="/practice/sample" className="hdr-btn-solid">Start free</Link>
