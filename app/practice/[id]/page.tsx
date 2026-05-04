@@ -239,24 +239,24 @@ export default function ExercisePage() {
     setFocusedIndex(wordIndex)
   }
 
-  function goNext(currentWordIndex: number) {
-    const pos = maskIndices.indexOf(currentWordIndex)
-    if (pos < maskIndices.length - 1) focusSlot(maskIndices[pos + 1])
-    else handleCheck()
-  }
+function goNext(currentWordIndex: number, currentAnswers?: Record<number, string>) {
+  const pos = maskIndices.indexOf(currentWordIndex)
+  if (pos < maskIndices.length - 1) focusSlot(maskIndices[pos + 1])
+  else handleCheck(currentAnswers)
+}
 
-  function handleType(wordIndex: number, ch: string) {
-    const token = tokens.find(t => t.wordIndex === wordIndex)
-    if (!token) return
-    const current = answers[wordIndex] ?? ''
-    if (current.length >= token.answerLength) return
-    const next = current + ch
-    setAnswers(prev => ({ ...prev, [wordIndex]: next }))
-    // auto-advance when all hidden slots are filled
-    if (next.length >= token.answerLength) {
-      setTimeout(() => goNext(wordIndex), 80)
-    }
+function handleType(wordIndex: number, ch: string) {
+  const token = tokens.find(t => t.wordIndex === wordIndex)
+  if (!token) return
+  const current = answers[wordIndex] ?? ''
+  if (current.length >= token.answerLength) return
+  const next = current + ch
+  const newAnswers = { ...answers, [wordIndex]: next }
+  setAnswers(newAnswers)
+  if (next.length >= token.answerLength) {
+    setTimeout(() => goNext(wordIndex, newAnswers), 80)
   }
+}
 
   function handleBackspace(wordIndex: number) {
     const current = answers[wordIndex] ?? ''
@@ -268,19 +268,19 @@ export default function ExercisePage() {
     }
   }
 
-async function handleCheck() {
+async function handleCheck(currentAnswers?: Record<number, string>) {
   clearInterval(timerRef.current!)
+  const answersToUse = currentAnswers ?? answers
   const res: Record<number, boolean> = {}
   tokens.forEach(t => {
     if (!t.shouldMask) return
-    const typed = answers[t.wordIndex] ?? ''
+    const typed = answersToUse[t.wordIndex] ?? ''
     const correct = (t.hiddenIndices ?? []).map(i => t.clean[i]).join('')
     res[t.wordIndex] = typed.toLowerCase() === correct.toLowerCase()
   })
   setResults(res)
   setChecked(true)
 
-  // save session to Supabase
   try {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -293,10 +293,8 @@ async function handleCheck() {
         score: correct,
         total: total,
         time_seconds: seconds,
-        answers: answers,
+        answers: answersToUse,
       })
-
-      // also log individual word attempts
       const attempts = tokens
         .filter(t => t.shouldMask)
         .map(t => ({
@@ -531,7 +529,7 @@ if (!t.shouldMask) {
 
         <div className="ex-footer">
           {!checked ? (
-            <button className="btn-check" onClick={handleCheck}>Check answers</button>
+            <button className="btn-check" onClick={() => handleCheck()}>Check answers</button>
           ) : (
             <button className="btn-next" onClick={handleNextPassage}>
               {isLast ? '← Back to Hub' : 'Next passage →'}
