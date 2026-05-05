@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -224,7 +224,7 @@ function SignupView({ onSwitch }: { onSwitch: () => void }) {
   )
 }
 
-export default function AuthPage() {
+function AuthPageContent() {
   const searchParams = useSearchParams()
   const viewParam = searchParams.get('view')
   const [view, setView] = useState<View>((viewParam as View) || 'login')
@@ -451,5 +451,13 @@ export default function AuthPage() {
         <Link href="/" className="auth-back">← Back to home</Link>
       </div>
     </>
+  )
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthPageContent />
+    </Suspense>
   )
 }

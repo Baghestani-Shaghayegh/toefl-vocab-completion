@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
@@ -174,7 +174,7 @@ function WordSlots({
   )
 }
 
-export default function ExercisePage() {
+function ExercisePageContent() {
   const router = useRouter()
   const params = useParams()
   const id = params?.id as string
@@ -557,5 +557,13 @@ if (!t.shouldMask) {
         </div>
       </div>
     </>
+  )
+}
+
+export default function ExercisePage() {
+  return (
+    <Suspense fallback={null}>
+      <ExercisePageContent />
+    </Suspense>
   )
 }
