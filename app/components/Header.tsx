@@ -316,12 +316,12 @@ export default function Header() {
                           </svg>
                           Practice Hub
                         </Link>
-                        <Link href="/account" className="dd-item" onClick={() => setDropdownOpen(false)}>
+                        {/* <Link href="/account" className="dd-item" onClick={() => setDropdownOpen(false)}>
                           <svg className="dd-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                           My Account
-                        </Link>
+                        </Link> */}
                       </div>
                       <div className="dd-section">
                         <button className="dd-item danger" onClick={handleSignOut}>
