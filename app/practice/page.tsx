@@ -26,10 +26,23 @@ export default function PracticePage() {
   const [filter, setFilter] = useState<string>('all')
   const [completed, setCompleted] = useState<Set<string>>(new Set())
 
-  useEffect(() => {
-    const stored = localStorage.getItem('completed_passages')
-    if (stored) setCompleted(new Set(JSON.parse(stored)))
-  }, [])
+useEffect(() => {
+  async function loadCompleted() {
+    const supabase = createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data } = await supabase
+      .from('sessions')
+      .select('passage_id')
+      .eq('user_id', user.id)
+    if (data) setCompleted(new Set(data.map((s: any) => s.passage_id)))
+  }
+
+  loadCompleted()
+
+  window.addEventListener('focus', loadCompleted)
+  return () => window.removeEventListener('focus', loadCompleted)
+}, [])
 
   useEffect(() => {
     async function load() {
