@@ -464,7 +464,27 @@ if (attempts?.length) {
           </>
         )}
 
+<div style={{
+          marginTop: 48,
+          paddingTop: 24,
+          borderTop: '1px solid #e8e2d8',
+          textAlign: 'center',
+        }}>
+          <a
+            href="mailto:support@lexivo.io?subject=Lexivo Feedback"
+            style={{
+              fontFamily: '"Special Elite", cursive',
+              fontSize: 14,
+              color: '#aaa',
+              textDecoration: 'none',
+            }}
+          >
+            Have feedback? Email us at support@lexivo.io
+          </a>
+        </div>
+
       </div>
     </>
   )
 }
+

@@ -517,6 +517,15 @@ export default function Home() {
       <footer>
         <div className="footer-logo">Lexivo</div>
         <div className="footer-copy">© {new Date().getFullYear()} Lexivo · Practice smarter. Score higher.</div>
+        <a href="mailto:support@lexivo.io" style={{
+  fontFamily: '"Special Elite", cursive',
+  fontSize: 14,
+  color: '#888',
+  textDecoration: 'none',
+  transition: 'color 0.12s',
+}}>
+  Send feedback
+</a>
       </footer>
     </>
   )
