@@ -199,6 +199,7 @@ export default function DashboardPage() {
         .streak-num { font-family: 'Special Elite', cursive; font-size: 26px; color: #111; line-height: 1; }
         .streak-label { font-family: 'Special Elite', cursive; font-size: 13px; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; }
 
+        .streak-chip svg { margin-bottom: 5px; }
 .s-label {
   font-family: 'Special Elite', cursive; font-size: 15px;
   color: #666; text-transform: uppercase; letter-spacing: 2px;
@@ -340,10 +341,16 @@ export default function DashboardPage() {
               <div className="xp-fill" style={{ width: `${xpProgress}%` }} />
             </div>
           </div>
-          <div className="streak-chip">
-            <span className="streak-num">{streak}</span>
-            <span className="streak-label">day streak</span>
-          </div>
+<div className="streak-chip">
+  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+    <svg width="20" height="22" viewBox="0 0 20 22" fill="none" stroke="#b05050" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 2C10 2 14 7 14 11c0 2.5-1.5 4-4 4s-4-1.5-4-4c0-1.5 1-3 2-4C8 9 8 11 10 11c0 0 2-1.5 2-3.5C12 5 10 2 10 2z"/>
+      <path d="M6 13c-1.5 1-2 2.5-2 4 0 2.8 2.7 4 6 4s6-1.2 6-4c0-1.5-.5-3-2-4"/>
+    </svg>
+    <span className="streak-num">{streak}</span>
+  </div>
+  <span className="streak-label">day streak</span>
+</div>
         </div>
 
         <span className="s-label">Practice</span>
