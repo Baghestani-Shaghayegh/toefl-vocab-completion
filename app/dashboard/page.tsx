@@ -13,6 +13,7 @@ type Session = {
   time_seconds: number
   completed_at: string
   topic?: string
+  title?: string  
 }
 
 type MissedWord = { word: string; count: number }
@@ -84,31 +85,51 @@ export default function DashboardPage() {
       const raw = sessionData ?? []
 
       const ids = [...new Set(raw.map(s => s.passage_id).filter(Boolean))]
-      let topicMap: Record<string, string> = {}
-      if (ids.length > 0) {
-        const { data: pd } = await supabase.from('passages').select('id, topic').in('id', ids)
-        pd?.forEach(p => { topicMap[p.id] = p.topic })
-      }
+let topicMap: Record<string, string> = {}
+let titleMap: Record<string, string> = {}
+if (ids.length > 0) {
+  const { data: pd } = await supabase.from('passages').select('id, topic, title').in('id', ids)
+  pd?.forEach(p => {
+    topicMap[p.id] = p.topic
+    titleMap[p.id] = p.title
+  })
+}
 
-      const enriched = raw.map(s => ({ ...s, topic: topicMap[s.passage_id] ?? 'General' }))
+      const enriched = raw.map(s => ({
+  ...s,
+  topic: topicMap[s.passage_id] ?? 'General',
+  title: titleMap[s.passage_id] ?? topicMap[s.passage_id] ?? 'General',
+}))
       setSessions(enriched)
 
-      const { data: attempts } = await supabase
-        .from('word_attempts')
-        .select('word, correct')
-        .eq('user_id', user.id)
-        .eq('correct', false)
+const { data: attempts } = await supabase
+  .from('word_attempts')
+  .select('word, correct, attempted_at')
+  .eq('user_id', user.id)
+  .order('attempted_at', { ascending: false })
 
-      if (attempts?.length) {
-        const counts: Record<string, number> = {}
-        attempts.forEach((a: any) => { counts[a.word] = (counts[a.word] ?? 0) + 1 })
-        setMissedWords(
-          Object.entries(counts)
-            .filter(([, count]) => count >= 2)
-            .map(([word, count]) => ({ word, count }))
-            .sort((a, b) => b.count - a.count)
-        )
-      }
+if (attempts?.length) {
+  const wordStatus: Record<string, boolean> = {}
+  attempts.forEach((a: any) => {
+    if (wordStatus[a.word] === undefined) {
+      wordStatus[a.word] = a.correct
+    }
+  })
+
+  const counts: Record<string, number> = {}
+  attempts.forEach((a: any) => {
+    if (!a.correct && wordStatus[a.word] === false) {
+      counts[a.word] = (counts[a.word] ?? 0) + 1
+    }
+  })
+
+  setMissedWords(
+    Object.entries(counts)
+      .filter(([, count]) => count >= 2)
+      .map(([word, count]) => ({ word, count }))
+      .sort((a, b) => b.count - a.count)
+  )
+}
 
       setLoading(false)
     }
@@ -398,10 +419,11 @@ export default function DashboardPage() {
               const cls = acc >= 80 ? 'acc-high' : acc >= 50 ? 'acc-mid' : 'acc-low'
               return (
                 <div className="session-row" key={s.id}>
-                  <div className="session-left">
-                    <span className="session-topic">{s.topic}</span>
-                    <span className="session-date">{formatDate(s.completed_at)}</span>
-                  </div>
+<div className="session-left">
+  <span className="session-topic">{s.title || s.topic}</span>
+  <span className="session-date">{s.topic}</span>
+  <span className="session-date">{formatDate(s.completed_at)}</span>
+</div>
                   <div className="session-right">
                     <div>
                       <div className="session-score">{s.score}/{s.total} correct</div>
