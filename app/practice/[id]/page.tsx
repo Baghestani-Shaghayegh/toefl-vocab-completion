@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 type Passage = {
   id: string
   text: string
   topic: string
-  difficulty: number
+  title: string
 }
 
 type WordToken = {
@@ -22,6 +22,7 @@ type WordToken = {
   // The "answer" is only the hidden letters joined
   answerLength: number
 }
+
 
 // How many letters to hide based on word length
 function hiddenCount(len: number): number {
@@ -192,12 +193,15 @@ export default function ExercisePage() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const slotRefs = useRef<Record<number, HTMLSpanElement | null>>({})
 
+  const searchParams = useSearchParams()
+const fromCategory = searchParams.get('from') ?? 'all'
+
   useEffect(() => {
     async function load() {
       const supabase = createClient()
       const [{ data: p }, { data: all }] = await Promise.all([
         supabase.from('passages').select('*').eq('id', id).single(),
-        supabase.from('passages').select('id,text,topic,difficulty').order('created_at', { ascending: false }),
+        supabase.from('passages').select('id,text,topic,title').order('created_at', { ascending: true }),
       ])
       if (!p) { setError('Passage not found.'); setLoading(false); return }
       setPassage(p)
@@ -309,19 +313,34 @@ async function handleCheck(currentAnswers?: Record<number, string>) {
   }
 }
 
-  function handleNextPassage() {
-    if (!passage) return
-    const idx = allPassages.findIndex(p => p.id === passage.id)
-    const next = allPassages[idx + 1]
-    router.push(next ? `/practice/${next.id}` : '/practice')
+function handleNextPassage() {
+  if (!passage) return
+
+  const filteredPassages = fromCategory === 'all'
+    ? allPassages
+    : allPassages.filter(p => p.topic?.toLowerCase() === fromCategory)
+
+  const idx = filteredPassages.findIndex(p => p.id === passage.id)
+  const next = filteredPassages[idx + 1]
+
+  if (next) {
+    router.push(`/practice/${next.id}?from=${fromCategory}`)
+  } else {
+    router.push('/practice')
   }
+}
 
   const m = Math.floor(seconds / 60)
   const s = seconds % 60
   const timerStr = `${pad(m)}:${pad(s)}`
   const maskedTokens = tokens.filter(t => t.shouldMask)
   const correctCount = Object.values(results).filter(Boolean).length
-  const isLast = allPassages.length > 0 && allPassages[allPassages.length - 1]?.id === id
+ const filteredPassages = fromCategory === 'all'
+  ? allPassages
+  : allPassages.filter(p => p.topic?.toLowerCase() === fromCategory)
+
+const isLast = filteredPassages.length > 0 &&
+  filteredPassages[filteredPassages.length - 1]?.id === id
 
   if (loading) return (
     <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 100 }}>
@@ -471,7 +490,7 @@ async function handleCheck(currentAnswers?: Record<number, string>) {
         <div className="paper-card">
           <div className="paper-content">
             {/* small topic label only — no big title */}
-            <div className="topic-label">{passage?.topic || 'General'}</div>
+            <div className="topic-label">{passage?.title || passage?.topic || 'General'}</div>
 
             <div className="passage-text">
               {tokens.map((t, i) => {

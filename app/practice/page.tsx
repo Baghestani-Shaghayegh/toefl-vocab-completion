@@ -9,13 +9,7 @@ type Passage = {
   id: string;
   text: string;
   topic: string;
-  difficulty: number;
-};
-
-const DIFFICULTY_LABEL: Record<number, string> = {
-  1: "Easy",
-  2: "Medium",
-  3: "Hard",
+  title: string;
 };
 
 export default function PracticePage() {
@@ -26,28 +20,29 @@ export default function PracticePage() {
   const [filter, setFilter] = useState<string>('all')
   const [completed, setCompleted] = useState<Set<string>>(new Set())
 
-useEffect(() => {
-  async function loadCompleted() {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data } = await supabase
-      .from('sessions')
-      .select('passage_id')
-      .eq('user_id', user.id)
-    if (data) setCompleted(new Set(data.map((s: any) => s.passage_id)))
-  }
+  useEffect(() => {
+    async function loadCompleted() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('sessions')
+        .select('passage_id')
+        .eq('user_id', user.id)
+      if (data) setCompleted(new Set(data.map((s: any) => s.passage_id)))
+    }
 
-  loadCompleted()
-
-  window.addEventListener('focus', loadCompleted)
-  return () => window.removeEventListener('focus', loadCompleted)
-}, [])
+    loadCompleted()
+    window.addEventListener('focus', loadCompleted)
+    return () => window.removeEventListener('focus', loadCompleted)
+  }, [])
 
   useEffect(() => {
     async function load() {
       const supabase = createClient();
-      const { data, error } = await supabase.from("passages").select("id, text, topic, difficulty");
+      const { data, error } = await supabase
+        .from("passages")
+        .select("id, text, topic, title");
       if (error) setError(error.message)
       else setPassages(data ?? [])
       setLoading(false);
@@ -70,12 +65,12 @@ useEffect(() => {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #f5f2eb; font-family: 'Special Elite', cursive; }
 
-.hub-wrap {
-  max-width: 800px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
-}
+        .hub-wrap {
+          max-width: 960px;
+          width: 100%;
+          margin: 0 auto;
+          padding: 48px 24px 80px;
+        }
 
         .hub-header { margin-bottom: 32px; }
 
@@ -93,7 +88,6 @@ useEffect(() => {
           color: #888;
         }
 
-        /* FILTER TABS */
         .filter-row {
           display: flex;
           align-items: center;
@@ -121,7 +115,6 @@ useEffect(() => {
           color: #fffef9;
         }
 
-        /* STACKED PAPER CARDS */
         .cards-list {
           display: flex;
           flex-direction: column;
@@ -185,18 +178,21 @@ useEffect(() => {
         .card-meta {
           display: flex;
           flex-direction: column;
-          gap: 4px;
+          gap: 3px;
         }
 
-        .card-topic {
+        .card-title {
           font-family: 'Special Elite', cursive;
           font-size: 16px;
           color: #2a2a2a;
         }
 
-        .diff-easy   { font-family: 'Special Elite', cursive; font-size: 14px; color: #6a9e6a; }
-        .diff-medium { font-family: 'Special Elite', cursive; font-size: 14px; color: #b8924a; }
-        .diff-hard   { font-family: 'Special Elite', cursive; font-size: 14px; color: #b06060; }
+        .card-topic {
+          font-family: 'Special Elite', cursive;
+          font-size: 13px;
+          color: #aaa;
+          text-transform: capitalize;
+        }
 
         .card-action { flex-shrink: 0; }
 
@@ -233,7 +229,6 @@ useEffect(() => {
         .btn-done:hover  { box-shadow: 1px 1px 0 #ccc; transform: none; }
         .btn-done:active { box-shadow: 1px 1px 0 #ccc; transform: none; }
 
-        /* STATES */
         .state-center {
           text-align: center;
           padding: 80px 0;
@@ -263,7 +258,6 @@ useEffect(() => {
           margin: 0 auto 14px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
 
         @media (max-width: 560px) {
           .hub-wrap { padding: 32px 16px 60px; }
@@ -326,15 +320,13 @@ useEffect(() => {
                 <div className="card-num">{i + 1}</div>
                 <div className="card-body" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
                   <div className="card-meta">
-                    <span className={`diff-${(DIFFICULTY_LABEL[passage.difficulty] ?? 'Easy').toLowerCase()}`}>
-                      {DIFFICULTY_LABEL[passage.difficulty] ?? 'Easy'}
-                    </span>
-                    <span className="card-topic">{passage.topic || 'General'}</span>
+                    <span className="card-title">{passage.title || passage.topic}</span>
+                    <span className="card-topic">{passage.topic}</span>
                   </div>
                   <div className="card-action">
                     <button
                       className={`btn-start${completed.has(passage.id) ? ' btn-done' : ' btn-go'}`}
-                      onClick={() => router.push(`/practice/${passage.id}`)}
+                      onClick={() => router.push(`/practice/${passage.id}?from=${filter}`)}
                     >
                       {completed.has(passage.id) ? 'Done' : 'Start →'}
                     </button>

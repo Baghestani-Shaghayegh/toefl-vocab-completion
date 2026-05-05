@@ -548,7 +548,7 @@ if (!t.shouldMask) {
                 <p className="upsell-eyebrow">
                   {correctCount === maskedTokens.length ? 'Perfect score' : correctCount / maskedTokens.length >= 0.6 ? 'Good effort' : 'Keep practicing'}
                 </p>
-                <h2 className="upsell-title">Unlock 50+ practice passages</h2>
+                <h2 className="upsell-title">Unlock 20+ practice passages</h2>
                 <p className="upsell-desc">
                   Sign up free to get daily drills, progress tracking, and adaptive exercises that target your weak vocabulary areas.
                 </p>
