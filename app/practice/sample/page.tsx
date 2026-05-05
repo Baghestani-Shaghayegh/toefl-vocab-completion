@@ -8,7 +8,7 @@ type Passage = {
   id: string
   text: string
   topic: string
-  difficulty: number
+  title: string  
 }
 
 type WordToken = {
@@ -488,7 +488,7 @@ function handleCheck(currentAnswers?: Record<number, string>) {
         {started && (
           <div className="paper-card">
             <div className="paper-content">
-              <div className="topic-label">{passage?.topic || 'General'}</div>
+              <div className="topic-label">{passage?.title || passage?.topic || 'General'}</div>
               <div className="passage-text">
                 {tokens.map((t, i) => {
 if (!t.shouldMask) {
