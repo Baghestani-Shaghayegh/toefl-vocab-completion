@@ -274,7 +274,7 @@ export default function Header() {
       <header className="hdr">
         <div className="hdr-inner">
 
-          <Link href="/" className="hdr-logo">Lexivo</Link>
+          <Link href={user ? '/dashboard' : '/'} className="hdr-logo">Lexivo</Link>
 
           <div className="hdr-right">
             {user ? (
