@@ -1,45 +1,46 @@
-'use client'
+"use client";
 
-import { useRouter } from 'next/navigation'
-import Header from './components/Header'
-
-// const FREE_FEATURES = [
-//   '3 practice passages per day',
-//   'Track your time as you complete each passage',
-//   'See correct answers instantly after each attempt',
-//   'Basic accuracy tracking',
-// ]
-
-// const PRO_FEATURES = [
-//   'Unlimited practice passages',
-//   'Simulated exam timer for real test conditions',
-//   'Identify your most missed words',
-//   'Practice weak vocabulary in new sentences',
-//   'Adaptive passages based on your level',
-//   'AI explanations for every mistake',
-//   'Full performance and progress history'
-// ]
+import { useRouter } from "next/navigation";
+import Header from "./components/Header";
 
 const FEATURES = [
   {
-    icon: '📄',
-    title: 'TOEFL-Style Content',
-    desc: 'Practice with passages that mirror the actual TOEFL Reading test format and difficulty level.',
+    icon: "📄",
+    title: "TOEFL-Style Passages",
+    desc: "Practice with academic passages that mirror the real TOEFL Reading section, covering science, history, biology, economics and more.",
   },
   {
-    icon: '⚡',
-    title: 'Instant Feedback',
-    desc: 'Get immediate results to understand your mistakes and improve with every session.',
+    icon: "⚡",
+    title: "Instant Feedback",
+    desc: "See exactly which words you got right or wrong the moment you finish. No waiting, no guessing.",
   },
   {
-    icon: '📚',
-    title: 'Build Vocabulary',
-    desc: 'Expand your academic vocabulary through contextual learning in authentic reading passages.',
+    icon: "📊",
+    title: "Track Your Progress",
+    desc: "Your dashboard tracks accuracy, streaks, time spent, and which words you keep missing. so you always know what to work on next.",
   },
-]
+];
+
+const HOW_IT_WORKS = [
+  {
+    step: "1",
+    title: "Choose a passage",
+    desc: "Pick from TOEFL-style academic reading passages across different topics and subjects.",
+  },
+  {
+    step: "2",
+    title: "Fill in the blanks",
+    desc: "Read the passage and type the missing letters of key vocabulary words as you go.",
+  },
+  {
+    step: "3",
+    title: "Get instant results",
+    desc: "See your score, time, and exactly which words you missed, then move to the next passage.",
+  },
+];
 
 export default function Home() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <>
@@ -55,18 +56,18 @@ export default function Home() {
           -webkit-font-smoothing: antialiased;
         }
 
-        /* ── HERO ── */
-.hero {
-  max-width: 710px;
-  margin: 0 auto;
-  padding: 0 24px;
-  text-align: center;
-  min-height: calc(100vh - 60px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+        /* HERO */
+        .hero {
+          max-width: 710px;
+          margin: 0 auto;
+          padding: 0 24px;
+          text-align: center;
+          min-height: calc(100vh - 60px);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+        }
 
         .hero-eyebrow {
           display: inline-block;
@@ -132,28 +133,18 @@ export default function Home() {
 
         .hero-note {
           margin-top: 16px;
-          font-size: 16px;
-          color: #111;
-          font-weight: bold;
+          font-family: 'Special Elite', cursive;
+          font-size: 14px;
+          color: #aaa;
         }
 
-        /* ── DIVIDER ── */
+        /* DIVIDER */
         .divider-full {
           border: none;
           border-top: 1px solid #d6d0c4;
         }
 
-        /* ── FEATURES ── */
-        .features {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 60px 24px;
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-
+        /* SECTION SHARED */
         .section-eyebrow {
           font-family: 'Caveat', cursive;
           font-size: 18px;
@@ -170,8 +161,24 @@ export default function Home() {
           font-size: clamp(24px, 3vw, 32px);
           color: #111;
           text-align: center;
-          margin-bottom: 48px;
+          margin-bottom: 12px;
           letter-spacing: -0.3px;
+        }
+
+        .section-sub {
+          font-family: 'Special Elite', cursive;
+          font-size: 16px;
+          color: #888;
+          text-align: center;
+          margin-bottom: 48px;
+          line-height: 1.7;
+        }
+
+        /* FEATURES */
+        .features {
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 80px 24px;
         }
 
         .feat-grid {
@@ -189,7 +196,7 @@ export default function Home() {
           transition: background 0.12s;
         }
 
-        .feat-card:last-child { border-right: 1.5px solid #d6d0c4; }
+        .feat-card:last-child { border-right: 1.5px solid #d6d0c4; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
         .feat-card:first-child { border-radius: 3px 0 0 3px; }
         .feat-card:last-child  { border-radius: 0 3px 3px 0; }
         .feat-card:hover { background: #fffcf3; }
@@ -207,163 +214,61 @@ export default function Home() {
         }
 
         .feat-inner { position: relative; z-index: 1; }
+        .feat-ico { font-size: 24px; margin-bottom: 14px; display: block; }
+        .feat-title { font-family: 'Special Elite', cursive; font-size: 17px; color: #111; margin-bottom: 10px; }
+        .feat-desc { font-family: 'Special Elite', cursive; font-size: 15px; color: #666; line-height: 1.7; }
 
-        .feat-ico {
-          font-size: 24px;
-          margin-bottom: 14px;
-          display: block;
+        /* HOW IT WORKS */
+        .how-wrap {
+          background: #fffef9;
+          border-top: 1px solid #d6d0c4;
+          border-bottom: 1px solid #d6d0c4;
         }
 
-        .feat-title {
+        .how-inner {
+          max-width: 880px;
+          margin: 0 auto;
+          padding: 80px 24px;
+        }
+
+        .how-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 0;
+        }
+
+        .how-card {
+          padding: 32px 28px;
+          border-right: 1px solid #d6d0c4;
+          position: relative;
+        }
+
+        .how-card:last-child { border-right: none; }
+
+        .how-step {
+          font-family: 'Caveat', cursive;
+          font-size: 42px;
+          font-weight: 600;
+          color: #d6d0c4;
+          line-height: 1;
+          margin-bottom: 12px;
+        }
+
+        .how-title {
           font-family: 'Special Elite', cursive;
           font-size: 17px;
           color: #111;
           margin-bottom: 10px;
         }
 
-        .feat-desc {
+        .how-desc {
           font-family: 'Special Elite', cursive;
-          font-size: 16px;
+          font-size: 15px;
           color: #666;
           line-height: 1.7;
         }
 
-        /* ── PRICING ── */
-        .pricing-wrap { padding: 80px 24px; min-height: calc(100vh - 60px); display: flex; flex-direction: column; justify-content: center; }
-
-        .pricing-inner {
-          max-width: 760px;
-          margin: 0 auto;
-        }
-
-        .plans {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 0;
-          margin-top: 48px;
-        }
-
-        .plan {
-          background: #fffef9;
-          border: 1.5px solid #d6d0c4;
-          border-right: none;
-          padding: 36px 32px;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .plan:last-child {
-          border-right: 1.5px solid #d6d0c4;
-          box-shadow: 3px 4px 0 #d6d0c4, 5px 7px 0 #ece8de;
-        }
-
-        .plan:first-child { border-radius: 3px 0 0 3px; }
-        .plan:last-child  { border-radius: 0 3px 3px 0; }
-
-        .plan::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: repeating-linear-gradient(
-            transparent, transparent 31px,
-            rgba(180,180,200,0.12) 31px, rgba(180,180,200,0.12) 32px
-          );
-          pointer-events: none;
-          border-radius: inherit;
-        }
-
-        .plan-inner { position: relative; z-index: 1; display: flex; flex-direction: column; height: 100%; }
-
-        .plan-badge {
-          display: inline-block;
-          font-size: 18px;
-          font-weight: 600;
-          color: #888;
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-          margin-bottom: 12px;
-        }
-
-        .plan-badge.highlight { color: #5a8c5a; }
-
-        .plan-price {
-          font-family: 'Special Elite', cursive;
-          font-size: 42px;
-          color: #111;
-          letter-spacing: -1px;
-          line-height: 1;
-          margin-bottom: 6px;
-        }
-
-        .plan-price sub {
-          font-size: 17px;
-          color: #aaa;
-          vertical-align: baseline;
-          letter-spacing: 0;
-        }
-
-        .plan-tagline {
-          font-family: 'Special Elite', cursive;
-          font-size: 15px;
-          color: #777;
-          line-height: 1.6;
-          margin-bottom: 20px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid #d6d0c4;
-        }
-
-        .plan-list { list-style: none; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
-
-        .plan-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 8px;
-          font-family: 'Special Elite', cursive;
-          font-size: 15px;
-          color: #444;
-          line-height: 1.4;
-        }
-
-        .chk {
-          font-family: 'Caveat', cursive;
-          font-size: 15px;
-          font-weight: 600;
-          color: #6a9e6a;
-          flex-shrink: 0;
-          margin-top: 1px;
-        }
-
-        .plan-btn {
-          display: block;
-          width: 100%;
-          margin-top: 28px;
-          padding: 12px;
-          border-radius: 2px;
-          font-family: 'Special Elite', cursive;
-          font-size: 15px;
-          cursor: pointer;
-          transition: all 0.1s;
-          text-align: center;
-        }
-
-        .plan-btn-outline {
-          background: none;
-          border: 1.5px solid #aaa;
-          color: #555;
-          box-shadow: 2px 2px 0 #ccc;
-        }
-        .plan-btn-outline:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 #ccc; }
-
-        .plan-btn-filled {
-          background: #222;
-          border: 1.5px solid #111;
-          color: #fff;
-          box-shadow: 2px 2px 0 #111;
-        }
-        .plan-btn-filled:hover { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 #111; }
-
-        /* ── BOTTOM CTA ── */
+        /* BOTTOM CTA */
         .bottom-cta {
           padding: 88px 24px;
           text-align: center;
@@ -388,13 +293,15 @@ export default function Home() {
           margin-bottom: 32px;
         }
 
-        /* ── FOOTER ── */
+        /* FOOTER */
         footer {
           border-top: 1px solid #d6d0c4;
           padding: 24px 40px;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          flex-wrap: wrap;
+          gap: 12px;
         }
 
         .footer-logo {
@@ -404,22 +311,36 @@ export default function Home() {
           letter-spacing: -0.3px;
         }
 
+        .footer-links {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+        }
+
+        .footer-link {
+          font-family: 'Special Elite', cursive;
+          font-size: 14px;
+          color: #888;
+          text-decoration: none;
+          transition: color 0.12s;
+        }
+        .footer-link:hover { color: #333; }
+
         .footer-copy {
           font-family: 'Special Elite', cursive;
-          font-size: 15px;
-          color: #666;
+          font-size: 14px;
+          color: #aaa;
         }
 
         @media (max-width: 700px) {
           .feat-grid { grid-template-columns: 1fr; }
           .feat-card { border-right: 1.5px solid #d6d0c4; border-bottom: none; border-radius: 0; }
           .feat-card:first-child { border-radius: 3px 3px 0 0; }
-          .feat-card:last-child  { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 3px; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
-          .plans { grid-template-columns: 1fr; }
-          .plan { border-right: 1.5px solid #d6d0c4; border-bottom: none; border-radius: 0; }
-          .plan:first-child { border-radius: 3px 3px 0 0; }
-          .plan:last-child  { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 3px; }
-          footer { flex-direction: column; gap: 8px; text-align: center; padding: 20px; }
+          .feat-card:last-child { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 3px; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
+          .how-grid { grid-template-columns: 1fr; }
+          .how-card { border-right: none; border-bottom: 1px solid #d6d0c4; }
+          .how-card:last-child { border-bottom: none; }
+          footer { flex-direction: column; text-align: center; padding: 20px; }
         }
       `}</style>
 
@@ -427,17 +348,18 @@ export default function Home() {
 
       {/* HERO */}
       <section className="hero">
-        <span className="hero-eyebrow">TOEFL Reading Practice</span>
-        <h1>Master TOEFL Reading <span>Word by Word</span></h1>
+        <span className="hero-eyebrow">Free TOEFL Reading Practice</span>
+        <h1>
+          Improve Your TOEFL Score <span>Word by Word</span>
+        </h1>
         <p className="hero-sub">
-          Practice fill-in-the-blank exercises with real TOEFL-style passages.
+          Fill in the missing letters of key vocabulary words inside real academic passages.
           <br />
-          Build vocabulary and improve your reading comprehension skills.
+          Practice daily and build the reading skills you need for the TOEFL exam.
         </p>
-        <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
-          Start Practicing Now
+        <button className="btn-cta" onClick={() => router.push("/practice/sample")}>
+          Start Practicing
         </button>
-        {/* <p className="hero-note">Free to start · No credit card required</p> */}
       </section>
 
       <hr className="divider-full" />
@@ -445,9 +367,13 @@ export default function Home() {
       {/* FEATURES */}
       <section className="features" id="features">
         <p className="section-eyebrow">Features</p>
-        <h2 className="section-title">Everything you need to improve</h2>
+        <h2 className="section-title">Everything you need to prepare for TOEFL Reading</h2>
+        <p className="section-sub">
+          Practice daily with real academic vocabulary in context, the most effective way to
+          prepare.
+        </p>
         <div className="feat-grid">
-          {FEATURES.map(f => (
+          {FEATURES.map((f) => (
             <div className="feat-card" key={f.title}>
               <div className="feat-inner">
                 <span className="feat-ico">{f.icon}</span>
@@ -461,54 +387,34 @@ export default function Home() {
 
       <hr className="divider-full" />
 
-      {/* PRICING — re-enable when paid plans are ready */}
-      {/*
-        <section className="pricing-wrap" id="pricing">
-          <div className="pricing-inner">
-            <p className="section-eyebrow">Pricing</p>
-            <h2 className="section-title">Start free. Upgrade when you're ready.</h2>
-            <div className="plans">
-          <div className="plan">
-            <div className="plan-inner">
-              <span className="plan-badge">Free</span>
-              <p className="plan-price">$0 <sub>/ forever</sub></p>
-              <p className="plan-tagline">Everything you need to start practicing consistently</p>
-              <ul className="plan-list">
-            {FREE_FEATURES.map(f => (
-              <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
+      {/* HOW IT WORKS */}
+      <section className="how-wrap">
+        <div className="how-inner">
+          <p className="section-eyebrow">How it works</p>
+          <h2 className="section-title">Simple, focused TOEFL vocabulary practice</h2>
+          <p className="section-sub">Three steps to better TOEFL reading comprehension.</p>
+          <div className="how-grid">
+            {HOW_IT_WORKS.map((h) => (
+              <div className="how-card" key={h.step}>
+                <div className="how-step">{h.step}</div>
+                <div className="how-title">{h.title}</div>
+                <p className="how-desc">{h.desc}</p>
+              </div>
             ))}
-              </ul>
-              <button className="plan-btn plan-btn-outline" onClick={() => router.push('/practice/sample')}>
-            Get started free
-              </button>
-            </div>
           </div>
-          <div className="plan">
-            <div className="plan-inner">
-              <span className="plan-badge highlight">Pro</span>
-              <p className="plan-price">$9 <sub>/ month</sub></p>
-              <p className="plan-tagline">Unlimited practice with AI-powered feedback and progress tracking</p>
-              <ul className="plan-list">
-            {PRO_FEATURES.map(f => (
-              <li key={f} className="plan-item"><span className="chk">✓</span>{f}</li>
-            ))}
-              </ul>
-              <button className="plan-btn plan-btn-filled" onClick={() => router.push('/auth?view=signup')}>
-            Upgrade to Pro
-              </button>
-            </div>
-          </div>
-            </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
-        <hr className="divider-full" />
-      */}
+      {/* BOTTOM CTA */}
       <section className="bottom-cta">
         <h2>Ready to improve your TOEFL reading score?</h2>
-        <p>Make progress every day with real exam-style passages.</p>
-        <button className="btn-cta" onClick={() => router.push('/practice/sample')}>
-          Try it now
+        <p>
+          Start building your academic vocabulary today with real TOEFL-style passages and instant
+          feedback. <br />
+          Completely free.
+        </p>
+        <button className="btn-cta" onClick={() => router.push("/practice/sample")}>
+          Try it now. It's free.
         </button>
       </section>
 
@@ -516,17 +422,19 @@ export default function Home() {
 
       <footer>
         <div className="footer-logo">Lexivo</div>
-        <div className="footer-copy">© {new Date().getFullYear()} Lexivo · Practice smarter. Score higher.</div>
-        <a href="mailto:support@lexivo.io" style={{
-  fontFamily: '"Special Elite", cursive',
-  fontSize: 14,
-  color: '#888',
-  textDecoration: 'none',
-  transition: 'color 0.12s',
-}}>
-  Send feedback
-</a>
+        <div className="footer-links">
+          <a href="/terms" className="footer-link">
+            Terms
+          </a>
+          <a href="/privacy" className="footer-link">
+            Privacy
+          </a>
+          <a href="mailto:support@lexivo.io?subject=Lexivo Feedback" className="footer-link">
+            Feedback
+          </a>
+        </div>
+        <div className="footer-copy">© {new Date().getFullYear()} Lexivo</div>
       </footer>
     </>
-  )
+  );
 }

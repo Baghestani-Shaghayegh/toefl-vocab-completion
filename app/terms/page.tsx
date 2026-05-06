@@ -1,3 +1,6 @@
+"use client";
+import { useRouter } from "next/navigation";
+
 const termsHTML = `
 <div data-custom-class="body">
 <div data-custom-class="title"><h1>TERMS OF SERVICE</h1></div>
@@ -147,9 +150,11 @@ South Korea<br/>
 <a href="mailto:support@lexivo.io">support@lexivo.io</a>
 </div>
 </div>
-`
+`;
 
 export default function TermsPage() {
+  const router = useRouter();
+
   return (
     <>
       <style>{`
@@ -172,6 +177,7 @@ export default function TermsPage() {
           display: block;
           margin-bottom: 32px;
           transition: color 0.12s;
+          cursor: pointer;
         }
         .btn-back:hover { color: #111; }
 
@@ -309,7 +315,9 @@ export default function TermsPage() {
       `}</style>
 
       <div className="terms-wrap">
-        <a href="/auth?view=signup" className="btn-back">← Back to sign up</a>
+        <button className="btn-back" onClick={() => router.back()}>
+          ← Back
+        </button>
         <div className="paper-card">
           <div className="paper-content">
             <div dangerouslySetInnerHTML={{ __html: termsHTML }} />
@@ -317,5 +325,5 @@ export default function TermsPage() {
         </div>
       </div>
     </>
-  )
+  );
 }
