@@ -58,7 +58,7 @@ export default function Home() {
 
         /* HERO */
         .hero {
-          max-width: 710px;
+          max-width: 830px;
           margin: 0 auto;
           padding: 0 24px;
           text-align: center;

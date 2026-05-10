@@ -220,7 +220,7 @@ if (attempts?.length) {
         .streak-num { font-family: 'Special Elite', cursive; font-size: 26px; color: #111; line-height: 1; }
         .streak-label { font-family: 'Special Elite', cursive; font-size: 13px; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .streak-chip svg { margin-bottom: 5px; }
+        .streak-chip svg { margin-bottom: 7px; }
 .s-label {
   font-family: 'Special Elite', cursive; font-size: 15px;
   color: #666; text-transform: uppercase; letter-spacing: 2px;
@@ -329,18 +329,47 @@ if (attempts?.length) {
         .empty-title { font-family: 'Special Elite', cursive; font-size: 16px; color: #666; margin-bottom: 5px; }
         .empty-sub   { font-family: 'Special Elite', cursive; font-size: 14px; color: #bbb; }
 
-        @media (max-width: 640px) {
-          .dash { padding: 32px 20px 60px; }
-          .stats-grid { grid-template-columns: repeat(2, 1fr); }
-          .stat-card { border-right: 1.5px solid #d6d0c4; border-bottom: none; border-radius: 0; }
-          .stat-card:nth-child(1) { border-radius: 3px 0 0 0; }
-          .stat-card:nth-child(2) { border-radius: 0 3px 0 0; }
-          .stat-card:nth-child(3) { border-radius: 0 0 0 3px; }
-          .stat-card:nth-child(4) { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 0; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
-          .xp-card { flex-direction: column; align-items: flex-start; }
-          .practice-card { flex-direction: column; align-items: flex-start; }
-          .session-right { gap: 10px; }
-        }
+@media (max-width: 640px) {
+  .dash { padding: 24px 16px 60px; }
+
+  .hero-name { font-size: 26px; }
+  .hero-sub { font-size: 15px; }
+
+  .xp-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+  .xp-top { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .xp-nums { font-size: 13px; }
+  .streak-chip {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .streak-num { font-size: 22px; }
+  .streak-chip svg { margin-bottom: 0; }
+
+  .practice-card { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .btn-go { width: 100%; text-align: center; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .stat-card { border-right: 1.5px solid #d6d0c4; border-bottom: none; border-radius: 0; }
+  .stat-card:nth-child(1) { border-radius: 3px 0 0 0; }
+  .stat-card:nth-child(2) { border-radius: 0 3px 0 0; }
+  .stat-card:nth-child(3) { border-radius: 0 0 0 3px; }
+  .stat-card:nth-child(4) { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 0; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
+  .stat-val { font-size: 22px; }
+
+  .session-row { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+  .session-right { gap: 10px; }
+  .session-topic { font-size: 14px; }
+
+  .missed-word { white-space: normal; }
+}
       `}</style>
       <Header />
 

@@ -259,13 +259,21 @@ export default function PracticePage() {
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        @media (max-width: 560px) {
-          .hub-wrap { padding: 32px 16px 60px; }
-          .passage-card { flex-wrap: wrap; gap: 10px; padding: 16px 20px; }
-          .card-num { display: none; }
-          .card-action { width: 100%; }
-          .btn-start { width: 100%; text-align: center; }
-        }
+@media (max-width: 560px) {
+  .hub-wrap { padding: 32px 16px 60px; }
+  .passage-card { padding: 14px 16px; gap: 10px; }
+  .card-num { display: none; }
+  .card-body { flex-direction: row; align-items: center; gap: 10px; }
+  .card-title { font-size: 14px; }
+  .card-topic { font-size: 12px; }
+  .card-action { flex-shrink: 0; }
+  .btn-start {
+    min-width: 70px;
+    font-size: 13px;
+    padding: 6px 12px;
+    white-space: nowrap;
+  }
+}
       `}</style>
 
       <Header />
