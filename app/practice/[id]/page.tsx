@@ -66,7 +66,7 @@ function WordSlots({
   onFocus, onType, onBackspace, onEnter, slotRef,
 }: {
   token: WordToken
-  typed: string        // typed letters for hidden slots only
+  typed: string
   checked: boolean
   isFocused: boolean
   onFocus: () => void
@@ -75,6 +75,8 @@ function WordSlots({
   onEnter: () => void
   slotRef: (el: HTMLSpanElement | null) => void
 }) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   function handleKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Enter') { e.preventDefault(); onEnter(); return }
     if (e.key === 'Backspace') { e.preventDefault(); onBackspace(); return }
@@ -85,6 +87,18 @@ function WordSlots({
     }
   }
 
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    const val = e.target.value
+    if (!val) { onBackspace(); return }
+    onType(val[val.length - 1])
+    e.target.value = ''
+  }
+
+  function handleFocus() {
+    onFocus()
+    inputRef.current?.focus()
+  }
+
   // build the visual character by character
   let hiddenTypedIdx = 0
 
@@ -92,7 +106,8 @@ function WordSlots({
     <span
       ref={slotRef}
       tabIndex={checked ? -1 : 0}
-      onFocus={onFocus}
+      onFocus={handleFocus}
+      onClick={handleFocus}
       onKeyDown={handleKeyDown}
       style={{
         outline: 'none',
@@ -102,8 +117,28 @@ function WordSlots({
         margin: '0 1px',
         cursor: checked ? 'default' : 'text',
         verticalAlign: 'baseline',
+        position: 'relative',
       }}
     >
+      <input
+        ref={inputRef}
+        onChange={handleInput}
+        onKeyDown={handleKeyDown}
+        style={{
+          position: 'absolute',
+          opacity: 0,
+          width: 1,
+          height: 1,
+          border: 'none',
+          outline: 'none',
+          pointerEvents: 'none',
+        }}
+        readOnly={checked}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck={false}
+      />
       {token.clean.split('').map((letter, ci) => {
         const isHidden = (token.hiddenIndices ?? []).includes(ci)
 
