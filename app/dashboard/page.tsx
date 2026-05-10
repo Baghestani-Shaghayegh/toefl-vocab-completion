@@ -220,7 +220,7 @@ if (attempts?.length) {
         .streak-num { font-family: 'Special Elite', cursive; font-size: 26px; color: #111; line-height: 1; }
         .streak-label { font-family: 'Special Elite', cursive; font-size: 13px; color: #aaa; text-transform: uppercase; letter-spacing: 1.5px; }
 
-        .streak-chip svg { margin-bottom: 7px; }
+        .streak-chip svg { margin-bottom: 8px; }
 .s-label {
   font-family: 'Special Elite', cursive; font-size: 15px;
   color: #666; text-transform: uppercase; letter-spacing: 2px;
@@ -341,7 +341,7 @@ if (attempts?.length) {
     gap: 16px;
     padding: 16px 20px;
   }
-  .xp-top { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 10px; }
+  .xp-top { flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 10px; }
   .xp-nums { font-size: 13px; }
   .streak-chip {
     flex-direction: row;
@@ -365,7 +365,7 @@ if (attempts?.length) {
 
 .session-row { padding: 12px 16px; }
 .session-left { flex: 1; min-width: 0; }
-.session-topic { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-topic { font-size: 13px; white-space: normal; word-wrap: break-word; }
 .session-date { font-size: 12px; }
 .session-right { flex-shrink: 0; gap: 8px; }
 .session-score { font-size: 13px; }
