@@ -341,7 +341,7 @@ if (attempts?.length) {
     gap: 16px;
     padding: 16px 20px;
   }
-  .xp-top { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .xp-top { flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 10px; }
   .xp-nums { font-size: 13px; }
   .streak-chip {
     flex-direction: row;
@@ -351,7 +351,6 @@ if (attempts?.length) {
     padding: 12px 16px;
   }
   .streak-num { font-size: 22px; }
-  .streak-chip svg { margin-bottom: 0; }
 
   .practice-card { flex-direction: column; align-items: flex-start; gap: 14px; }
   .btn-go { width: 100%; text-align: center; }
@@ -364,9 +363,14 @@ if (attempts?.length) {
   .stat-card:nth-child(4) { border-bottom: 1.5px solid #d6d0c4; border-radius: 0 0 3px 0; box-shadow: 2px 3px 0 #d6d0c4, 4px 6px 0 #ece8de; }
   .stat-val { font-size: 22px; }
 
-  .session-row { flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
-  .session-right { gap: 10px; }
-  .session-topic { font-size: 14px; }
+.session-row { padding: 12px 16px; }
+.session-left { flex: 1; min-width: 0; }
+.session-topic { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.session-date { font-size: 12px; }
+.session-right { flex-shrink: 0; gap: 8px; }
+.session-score { font-size: 13px; }
+.session-time { font-size: 12px; }
+.acc-badge { font-size: 13px; min-width: 32px; }
 
   .missed-word { white-space: normal; }
 }

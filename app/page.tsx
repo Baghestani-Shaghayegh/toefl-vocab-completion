@@ -349,9 +349,9 @@ export default function Home() {
       {/* HERO */}
       <section className="hero">
         <span className="hero-eyebrow">Free TOEFL Reading Practice</span>
-        <h1>
-          Improve Your TOEFL Score <span>Word by Word</span>
-        </h1>
+<h1>
+  Improve Your TOEFL Score<br /><span>Word by Word</span>
+</h1>
         <p className="hero-sub">
           Fill in the missing letters of key vocabulary words inside real academic passages.
           <br />
